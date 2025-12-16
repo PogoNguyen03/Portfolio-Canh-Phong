@@ -1,8 +1,24 @@
+/* app/globals.css */
 @import "tailwindcss";
 
 :root {
+  /* Chế độ Sáng (Mặc định) */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #0f172a;
+  --card-bg: rgba(255, 255, 255, 0.7);
+  --border-color: #e2e8f0;
+  --text-muted: #64748b;
+  --accent: #2563eb; /* Blue 600 */
+}
+
+/* Chế độ Tối (Dark Mode) */
+.dark {
+  --background: #0f172a; /* Slate 900 */
+  --foreground: #f8fafc; /* Slate 50 */
+  --card-bg: rgba(30, 41, 59, 0.7); /* Slate 800 blur */
+  --border-color: #334155; /* Slate 700 */
+  --text-muted: #94a3b8; /* Slate 400 */
+  --accent: #60a5fa; /* Blue 400 */
 }
 
 @theme inline {
@@ -12,15 +28,45 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  /* Nền chấm bi thay đổi theo chế độ */
+  background-image: radial-gradient(var(--border-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+  background-attachment: fixed;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --- TÙY CHỈNH THANH CUỘN (CROSS-BROWSER) --- */
+
+/* 1. Chuẩn W3C (Firefox, Edge mới) */
+html {
+  scrollbar-width: thin; /* Mỏng */
+  scrollbar-color: #94a3b8 transparent; /* Màu thanh cuộn + Màu nền */
+}
+
+/* 2. Webkit (Chrome, Safari, Edge cũ) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+  border: 2px solid transparent; /* Tạo khoảng hở nếu cần */
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+}
+
+/* Dark mode scrollbar */
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #475569;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
 }

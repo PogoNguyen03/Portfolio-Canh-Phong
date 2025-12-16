@@ -1,0 +1,105 @@
+{
+  "personalInfo": {
+    "name": "NGUYEN CANH PHONG",
+    "title": "Full Stack Developer | Business Analyst",
+    "location": "Dist 7, HCMC",
+    "phone": "+84 774.651.178",
+    "email": "nguyencanhphong246@gmail.com",
+    "github": "github.com/pogonguyen03",
+    "summary": "Results-oriented Full Stack Developer with 1+ year experience. Proven track record in building scalable web apps and optimizing high-traffic systems. Strong BA foundation, skilled in translating requirements into specs.",
+    "gpa": "3.27 / 4.0",
+    "toeic": "TOEIC 570",
+    "avatar": "/uploads/avatar-1765868360367.jpg",
+    "cvPath": "/uploads/cv-1765868365093.pdf"
+  },
+  "skills": {
+    "languages": [
+      "Java",
+      "C#",
+      "PHP",
+      "Python",
+      "JavaScript",
+      "Dart"
+    ],
+    "frontend": [
+      "ReactJS",
+      "Next.js",
+      "Tailwind",
+      "Bootstrap",
+      "HTML5/CSS3"
+    ],
+    "backend": [
+      "Node.js",
+      ".NET",
+      "SQL Server",
+      "MySQL",
+      "Oracle",
+      "MongoDB",
+      "Firebase"
+    ],
+    "mobileTools": [
+      "Android",
+      "Flutter",
+      "Git",
+      "Postman",
+      "Selenium",
+      "WordPress"
+    ],
+    "designBA": [
+      "StarUML",
+      "Balsamiq",
+      "Figma",
+      "Photoshop",
+      "Illustrator"
+    ]
+  },
+  "experiences": [
+    {
+      "id": 1,
+      "company": "THIEN CO TRI LIEN CO., LTD",
+      "role": "Full Stack Developer",
+      "period": "Dec 2024 - Present",
+      "description": [
+        "High-Volume System: Managed 1,000+ domains (PHP/Python/CMS).",
+        "Automation: Developed scripts slashing manual entry time by 40%.",
+        "Web Dev: Customized WordPress themes for high-traffic niches.",
+        "Server Admin: Maintained 99.9% uptime with proactive monitoring."
+      ]
+    },
+    {
+      "id": 2,
+      "company": "BIT GROUP INVESTMENT JSC",
+      "role": "Web Developer Intern",
+      "period": "Aug 2024 - Nov 2024",
+      "description": [
+        "Built and deployed corporate websites using WordPress and PHP.",
+        "BA Role: Bridged gap between clients and developers, ensuring 100% on-time delivery."
+      ]
+    },
+    {
+      "id": 3,
+      "company": "TRUONG THINH TECHNOLOGY",
+      "role": "Hardware Technician Intern",
+      "period": "Apr 2024 - May 2024",
+      "description": [
+        "Diagnosed hardware issues; assembled/configured PC systems."
+      ]
+    }
+  ],
+  "projects": [
+    {
+      "id": 1,
+      "name": "Digital Wedding Invitation Platform",
+      "stack": "Next.js, Prisma, SQL",
+      "overview": "Architected a scalable platform allowing users to generate personalized QR codes for event check-ins.",
+      "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication."
+    },
+    {
+      "id": 2,
+      "name": "2D RPG Game Engine",
+      "stack": "Core Java, NetBeans",
+      "overview": "Developed a Java-based game engine from scratch, applying advanced OOP principles.",
+      "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly."
+    }
+  ]
+}
