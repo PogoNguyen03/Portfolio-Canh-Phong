@@ -7,8 +7,11 @@
     "email": "nguyencanhphong246@gmail.com",
     "github": "github.com/pogonguyen03",
     "summary": "Results-oriented Full Stack Developer with 1+ year experience. Proven track record in building scalable web apps and optimizing high-traffic systems. Strong BA foundation, skilled in translating requirements into specs.",
+    "university": "Ho Chi Minh City University of Foreign Languages – Information Technology (HUFLIT)",
+    "degree": "Software Engineering",
+    "graduationType": "Very Good",
     "gpa": "3.27 / 4.0",
-    "toeic": "TOEIC 570",
+    "languages": "English (TOEIC 570)",
     "avatar": "/uploads/avatar-1765940671607.jpg",
     "cvPath": "/uploads/cv-1765868365093.pdf"
   },
@@ -88,18 +91,37 @@
   ],
   "projects": [
     {
-      "id": 1,
       "name": "Digital Wedding Invitation Platform",
+      "role": "Full Stack Developer & System Architect",
       "stack": "Next.js, Prisma, SQL",
       "overview": "Architected a scalable platform allowing users to generate personalized QR codes for event check-ins.",
-      "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication."
+      "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication.",
+      "github": "https://github.com",
+      "demo": "https://wedding-demo.vercel.app",
+      "video": "",
+      "visibility": "Private",
+      "images": [
+        "/uploads/cv-1765963693231.jfif",
+        "/uploads/cv-1765963695234.jfif",
+        "/uploads/cv-1765963697398.jfif"
+      ],
+      "id": 1
     },
     {
-      "id": 2,
       "name": "2D RPG Game Engine",
+      "role": "Game Developer",
       "stack": "Core Java, NetBeans",
       "overview": "Developed a Java-based game engine from scratch, applying advanced OOP principles.",
-      "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly."
+      "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly.",
+      "github": "",
+      "demo": "",
+      "video": "",
+      "visibility": "Private",
+      "images": [
+        "/uploads/cv-1765964472935.jfif",
+        "/uploads/cv-1765964479366.jfif"
+      ],
+      "id": 2
     }
   ]
 }
