@@ -240,7 +240,7 @@ export default function Portfolio() {
   const roles = personalInfo.title.split('|').map((r: string) => r.trim()).slice(0, 3);
 
   return (
-    <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative bg-slate-50 dark:bg-[#0b1121] transition-colors duration-500">
+    <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
 
       {/* Progress Bar */}
       <motion.div
@@ -343,7 +343,7 @@ export default function Portfolio() {
               <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6">
                 Hello, I'm <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">
-                  {personalInfo.name.split(' ').pop()}
+                  {personalInfo.name}
                 </span>
               </h1>
 
