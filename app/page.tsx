@@ -5,9 +5,9 @@ import Link from 'next/link';
 import {
   Github, Mail, MapPin, ExternalLink, Code2,
   Layers, Terminal, Sun, Moon, Monitor,
-  GitCommit, Calendar, ArrowUp, Check, Copy, X,
+  GitCommit, ArrowUp, Check, Copy, X,
   Send, User, AtSign, MessageSquare, Paperclip,
-  GraduationCap, Award, Globe, Lock
+  GraduationCap, Award, Globe, Lock, Phone, Menu
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
@@ -53,7 +53,7 @@ function TerminalIntro({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-// 2. Scroll To Top (Giữ nguyên)
+// 2. Scroll To Top (Đã chỉnh vị trí tránh nút Theme Toggle trên Mobile)
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
   useEffect(() => {
@@ -64,7 +64,17 @@ function ScrollToTop() {
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
   return (
     <AnimatePresence>
-      {isVisible && (<motion.button initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} onClick={scrollToTop} className="fixed bottom-8 right-8 z-50 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1"><ArrowUp size={24} /></motion.button>)}
+      {isVisible && (
+        <motion.button 
+            initial={{ opacity: 0, scale: 0.5 }} 
+            animate={{ opacity: 1, scale: 1 }} 
+            exit={{ opacity: 0, scale: 0.5 }} 
+            onClick={scrollToTop} 
+            className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1"
+        >
+            <ArrowUp size={24} />
+        </motion.button>
+      )}
     </AnimatePresence>
   );
 }
@@ -99,10 +109,11 @@ function SkillBadge({ item }: { item: string }) {
 }
 
 // 5. Contact Section (Giữ nguyên)
-function ContactSection() {
+function ContactSection({ personalInfo }: { personalInfo: any }) {
   const [status, setStatus] = useState<any>(null);
   const [isPending, setIsPending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  
   async function handleSubmit(formData: FormData) {
     setIsPending(true);
     const res = await submitContactForm(formData);
@@ -113,36 +124,65 @@ function ContactSection() {
       setTimeout(() => setStatus(null), 5000);
     }
   }
+
   return (
     <section id="contact" className="mb-32 scroll-mt-28">
-      <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Get In Touch</h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Interested in working together? Drop me a message!</p></div>
-      <div className="max-w-2xl mx-auto">
-        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-          <form ref={formRef} action={handleSubmit} className="space-y-6 relative z-10">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><User size={16} /> Name</label><input type="text" name="name" required placeholder="John Doe" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
-              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><AtSign size={16} /> Email</label><input type="email" name="email" required placeholder="john@example.com" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Get In Touch</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+          Interested in working together? Drop me a message or contact me directly!
+        </p>
+      </div>
+
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
+        <div className="space-y-6">
+            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 h-full flex flex-col justify-center">
+                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Contact Information</h3>
+                <div className="space-y-8">
+                    <div className="flex items-center gap-5">
+                        <div className="p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl"><User size={24} /></div>
+                        <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.name}</p></div>
+                    </div>
+                    <div className="flex items-center gap-5">
+                        <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl"><Phone size={24} /></div>
+                        <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone Number</p><a href={`tel:${personalInfo.phone}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{personalInfo.phone}</a></div>
+                    </div>
+                    <div className="flex items-center gap-5">
+                        <div className="p-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl"><Mail size={24} /></div>
+                        <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email Address</p><a href={`mailto:${personalInfo.email}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-all">{personalInfo.email}</a></div>
+                    </div>
+                    <div className="flex items-center gap-5">
+                        <div className="p-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl"><MapPin size={24} /></div>
+                        <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Location</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.location}</p></div>
+                    </div>
+                </div>
             </div>
-            <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><MessageSquare size={16} /> Message</label><textarea name="message" required rows={4} placeholder="Let's build something amazing..." className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"></textarea></div>
-            <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Paperclip size={16} /> Attachments (Max 3 files)</label><input type="file" name="files" multiple accept="image/*,.pdf,.doc,.docx" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400 cursor-pointer" /></div>
-            <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={isPending} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all">{isPending ? "Sending..." : <>Send Message <Send size={20} /></>}</motion.button>
-            <AnimatePresence>{status && (<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`p-4 rounded-xl text-center text-sm font-medium ${status.success ? 'bg-green-500/20 text-green-600 dark:text-green-400' : 'bg-red-500/20 text-red-600 dark:text-red-400'}`}>{status.message}</motion.div>)}</AnimatePresence>
-          </form>
+        </div>
+
+        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
+           <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+           <form ref={formRef} action={handleSubmit} className="space-y-6 relative z-10">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><User size={16} /> Name</label><input type="text" name="name" required placeholder="John Doe" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
+                <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><AtSign size={16} /> Email</label><input type="email" name="email" required placeholder="john@example.com" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
+              </div>
+              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><MessageSquare size={16} /> Message</label><textarea name="message" required rows={4} placeholder="Let's build something amazing..." className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"></textarea></div>
+              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Paperclip size={16} /> Attachments (Max 3 files)</label><input type="file" name="files" multiple accept="image/*,.pdf,.doc,.docx" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400 cursor-pointer"/></div>
+              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={isPending} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all">{isPending ? "Sending..." : <>Send Message <Send size={20} /></>}</motion.button>
+              <AnimatePresence>{status && (<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`p-4 rounded-xl text-center text-sm font-medium ${status.success ? 'bg-green-500/20 text-green-600 dark:text-green-400' : 'bg-red-500/20 text-red-600 dark:text-red-400'}`}>{status.message}</motion.div>)}</AnimatePresence>
+           </form>
         </div>
       </div>
     </section>
   );
 }
 
-// 6. Project Card (CẬP NHẬT: GIAO DIỆN ZIGZAG CHUYÊN NGHIỆP)
+// 6. Project Card (CẢI TIẾN GIAO DIỆN MOBILE)
 function ProjectCard({ project, index }: { project: any, index: number }) {
   const stackList = project.stack.split(',').map((s: string) => s.trim());
-  const projectIndex = String(index + 1).padStart(2, '0');
+  const projectIndex = String(index + 1).padStart(2, '0'); 
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
   const isEven = index % 2 === 0;
-
-  // Xác định trạng thái
   const isPrivate = project.visibility === 'Private';
 
   return (
@@ -151,92 +191,55 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: 0.1 }}
-      className={`group relative flex flex-col gap-8 md:items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
+      // UPDATE: flex-col-reverse cho Mobile để Ảnh lên đầu
+      className={`group relative flex flex-col-reverse gap-6 md:gap-8 md:items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
     >
-      {/* 1. INFO COLUMN */}
       <div className="flex-1 relative z-10">
-        {/* HEADER: Featured + Visibility Badge */}
-        <div className={`flex items-center gap-3 mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
-          <span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">Featured Project</span>
-          {/* --- VISIBILITY BADGE --- */}
-          <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${isPrivate
-              ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700'
-              : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'
-            }`}>
-            {isPrivate ? <Lock size={10} /> : <Globe size={10} />}
-            {project.visibility || 'Public'}
-          </span>
-        </div>
-
-        <h3 className={`text-3xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-6 ${isEven ? 'text-left' : 'md:text-right text-left'}`}>
-          <Link href={`/project/${project.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            {project.name}
-          </Link>
-        </h3>
-
-        <div className={`relative p-6 md:p-8 bg-white dark:bg-slate-900/90 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-800 backdrop-blur-sm transition-transform hover:-translate-y-1 duration-300 ${isEven ? 'mr-0 md:-mr-16' : 'ml-0 md:-ml-16'}`}>
-          <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
-            {project.overview}
-          </p>
-        </div>
-
-        <div className={`flex flex-wrap gap-2 mt-6 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
-          {stackList.map((tech: string, i: number) => (
-            <span key={i} className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full font-mono">
-              {tech}
+         <div className={`flex items-center gap-3 mb-3 md:mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+            <span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">Featured Project</span>
+            <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${isPrivate ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'}`}>
+                {isPrivate ? <Lock size={10} /> : <Globe size={10} />}
+                {project.visibility || 'Public'}
             </span>
-          ))}
-        </div>
+         </div>
 
-        <div className={`mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
-          <Link href={`/project/${project.id}`} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-            View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} />
-          </Link>
+         <h3 className={`text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 md:mb-6 ${isEven ? 'text-left' : 'md:text-right text-left'}`}>
+            <Link href={`/project/${project.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.name}</Link>
+         </h3>
 
-          {/* --- QUICK LINKS (NẾU PUBLIC) --- */}
-          {!isPrivate && project.github && (
-            <a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub">
-              <Github size={20} />
-            </a>
-          )}
-          {!isPrivate && project.demo && (
-            <a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo">
-              <ExternalLink size={20} />
-            </a>
-          )}
-        </div>
+         {/* UPDATE: Mobile (bỏ background, bỏ shadow, bỏ padding) / Desktop (giữ nguyên box style) */}
+         <div className={`relative transition-transform hover:-translate-y-1 duration-300
+            md:p-8 md:bg-white md:dark:bg-slate-900/90 md:rounded-2xl md:shadow-xl md:border md:border-slate-100 md:dark:border-slate-800 md:backdrop-blur-sm
+            ${isEven ? 'md:mr-0 md:-mr-16' : 'md:ml-0 md:-ml-16'}
+         `}>
+            <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
+                {project.overview}
+            </p>
+         </div>
+
+         <div className={`flex flex-wrap gap-2 mt-4 md:mt-6 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+            {stackList.map((tech: string, i: number) => (<span key={i} className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full font-mono">{tech}</span>))}
+         </div>
+
+         <div className={`mt-6 md:mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+             <Link href={`/project/${project.id}`} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>
+             {!isPrivate && project.github && (<a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub"><Github size={20} /></a>)}
+             {!isPrivate && project.demo && (<a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo"><ExternalLink size={20} /></a>)}
+         </div>
       </div>
 
-      {/* 2. IMAGE COLUMN */}
-      <div className="flex-[1.2] relative group/img">
-        <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
-          {coverImage ? (
-            <div className="relative w-full h-full">
-              <img
-                src={coverImage}
-                alt={project.name}
-                className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105"
-              />
-              {/* Overlay: Nếu Private thì hiện icon khóa khi hover */}
-              <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
-                {isPrivate && (
-                  <div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity">
-                    <Lock size={16} /> Private Access
+      <div className="flex-[1.2] relative group/img w-full">
+          <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
+              {coverImage ? (
+                  <div className="relative w-full h-full">
+                      <img src={coverImage} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" />
+                      <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
+                          {isPrivate && (<div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity"><Lock size={16} /> Private Access</div>)}
+                      </div>
                   </div>
-                )}
-              </div>
-            </div>
-          ) : (
-            <div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700">
-              <Layers size={64} className="mb-4" />
-              <span className="text-sm font-mono">No Cover Image</span>
-            </div>
-          )}
-        </Link>
-
-        <div className={`absolute -bottom-10 -z-10 text-[120px] md:text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>
-          {projectIndex}
-        </div>
+              ) : (<div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700"><Layers size={64} className="mb-4" /><span className="text-sm font-mono">No Cover Image</span></div>)}
+          </Link>
+          <div className={`absolute -bottom-10 -z-10 text-[120px] md:text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>{projectIndex}</div>
       </div>
     </motion.div>
   );
@@ -269,25 +272,15 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
 export default function Portfolio() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showIntro, setShowIntro] = useState(false); // Mặc định là false để tránh flash
-
-  useEffect(() => {
-    // Chỉ chạy trên client
-    const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
-    if (!hasSeenIntro) {
-      setShowIntro(true);
-    }
-  }, []);
-
-  const handleIntroComplete = () => {
-    setShowIntro(false);
-    sessionStorage.setItem('hasSeenIntro', 'true');
-  };
+  const [showIntro, setShowIntro] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [githubUsername, setGithubUsername] = useState('');
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [copied, setCopied] = useState(false);
+  
+  // Mobile Menu State
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleCopyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
@@ -299,6 +292,10 @@ export default function Portfolio() {
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
 
   useEffect(() => {
+    const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
+    if (!hasSeenIntro) {
+      setShowIntro(true);
+    }
     setSelectedYear(new Date().getFullYear());
     async function fetchData() {
       try {
@@ -317,6 +314,11 @@ export default function Portfolio() {
     fetchData();
     trackVisit();
   }, []);
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+    sessionStorage.setItem('hasSeenIntro', 'true');
+  };
 
   useEffect(() => {
     if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
@@ -367,13 +369,11 @@ export default function Portfolio() {
 
   const { personalInfo, skills, experiences, projects } = data;
   const roles = personalInfo.title.split('|').map((r: string) => r.trim());
-  const currentYear = new Date().getFullYear();
+  const navItems = ['About', 'Skills', 'Experience', 'Projects', 'Contact'];
 
   return (
     <>
-      <AnimatePresence>
-        {showIntro && <TerminalIntro onComplete={handleIntroComplete} />}
-      </AnimatePresence>
+      <AnimatePresence>{showIntro && <TerminalIntro onComplete={handleIntroComplete} />}</AnimatePresence>
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
           <ScrollToTop />
@@ -384,11 +384,14 @@ export default function Portfolio() {
             <motion.div animate={{ x: [0, -50, 0], y: [0, 50, 0] }} transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/10 dark:bg-purple-600/20 rounded-full blur-[120px]" />
           </div>
 
-          <div className="fixed top-6 left-0 right-0 flex justify-center z-50 px-4 pointer-events-none">
+          {/* --- RESPONSIVE HEADER --- */}
+          
+          {/* Desktop Nav */}
+          <div className="hidden md:flex fixed top-6 left-0 right-0 justify-center z-50 px-4 pointer-events-none">
             <div className="pointer-events-auto flex items-center gap-4">
-              <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50 rounded-full px-2 py-2 md:px-6 md:py-3 flex items-center gap-1">
-                <span className="font-bold text-slate-800 dark:text-white mr-4 hidden md:block">{personalInfo.name.split(' ').pop()}</span>
-                {['About', 'Skills', 'Experience', 'Projects', 'Contact'].map((item) => {
+              <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50 rounded-full px-6 py-3 flex items-center gap-1">
+                <span className="font-bold text-slate-800 dark:text-white mr-4">{personalInfo.name.split(' ').pop()}</span>
+                {navItems.map((item) => {
                   const id = item.toLowerCase();
                   const isActive = activeSection === id;
                   return (
@@ -405,6 +408,36 @@ export default function Portfolio() {
             </div>
           </div>
 
+          {/* Mobile Nav Header */}
+          <div className="md:hidden fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50">
+             <span className="font-bold text-slate-900 dark:text-white text-lg">{personalInfo.name.split(' ').pop()}</span>
+             <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+                <Menu size={28} />
+             </button>
+          </div>
+
+          {/* Mobile Menu Overlay */}
+          <AnimatePresence>
+            {mobileMenuOpen && (
+              <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed inset-0 z-[100] bg-white dark:bg-slate-950 flex flex-col md:hidden">
+                <div className="p-4 flex justify-end border-b border-slate-100 dark:border-slate-800">
+                    <button onClick={() => setMobileMenuOpen(false)} className="p-2 text-slate-500 hover:text-red-500 transition-colors"><X size={32} /></button>
+                </div>
+                <div className="flex-1 flex flex-col items-center justify-center gap-8">
+                    {navItems.map((item, index) => (
+                         <motion.a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} className="text-3xl font-bold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400">{item}</motion.a>
+                    ))}
+                </div>
+                <div className="p-8 text-center text-slate-400 text-sm">© 2025 {personalInfo.name}</div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Mobile Theme Toggle (Bottom Right) */}
+          <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">
+             {darkMode ? <Sun size={24} /> : <Moon size={24} />}
+          </motion.button>
+
           <main className="max-w-6xl mx-auto px-4 md:px-8 pb-24 pt-32 relative z-10">
             {/* HERO SECTION */}
             <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
@@ -416,29 +449,20 @@ export default function Portfolio() {
                   <div className="mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex gap-2"><span>I am a</span><span className="font-bold text-slate-800 dark:text-blue-400"><Typewriter texts={roles} /></span></div>
                   <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
                   <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
-
-                  {/* --- PHẦN HIỂN THỊ HỌC VẤN & NGOẠI NGỮ --- */}
+                  
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                    {personalInfo.university && (
-                      <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                        <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p>
-                          <p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p>
-                          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p>
+                      {personalInfo.university && (
+                        <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                           <div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div>
+                           <div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p><p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p><p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p></div>
                         </div>
-                      </div>
-                    )}
-                    {(personalInfo.gpa || personalInfo.languages) && (
-                      <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
-                        <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div>
-                        <div>
-                          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Achievements</p>
-                          {personalInfo.gpa && <p className="text-sm font-bold text-slate-800 dark:text-slate-200">GPA: {personalInfo.gpa}</p>}
-                          {personalInfo.languages && (<div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 dark:text-slate-400"><Globe size={12} /> {personalInfo.languages}</div>)}
+                      )}
+                      {(personalInfo.gpa || personalInfo.languages) && (
+                        <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                           <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div>
+                           <div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Achievements</p>{personalInfo.gpa && <p className="text-sm font-bold text-slate-800 dark:text-slate-200">GPA: {personalInfo.gpa}</p>}{personalInfo.languages && (<div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 dark:text-slate-400"><Globe size={12} /> {personalInfo.languages}</div>)}</div>
                         </div>
-                      </div>
-                    )}
+                      )}
                   </div>
 
                   <div className="flex flex-wrap gap-4">
@@ -485,11 +509,11 @@ export default function Portfolio() {
 
             {/* EXPERIENCE SECTION */}
             <section id="experience" className="mb-32 scroll-mt-28">
-              <div className="flex flex-col md:flex-row justify-between items-end mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div><div className="hidden md:block w-32 h-1 bg-slate-200 dark:bg-slate-800 rounded-full"></div></div>
+              <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div><div className="hidden md:block w-32 h-1 bg-slate-200 dark:bg-slate-800 rounded-full"></div></div>
               <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
             </section>
 
-            {/* PROJECTS SECTION (THAY ĐỔI: Dùng Flex Column thay vì Grid) */}
+            {/* PROJECTS SECTION */}
             <section id="projects" className="mb-32 scroll-mt-28">
               <div className="text-center mb-24">
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Featured Projects</h2>
@@ -501,8 +525,9 @@ export default function Portfolio() {
                 ))}
               </div>
             </section>
-
-            <ContactSection />
+            
+            {/* CONTACT SECTION */}
+            <ContactSection personalInfo={personalInfo} /> 
 
           </main>
 
