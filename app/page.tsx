@@ -327,12 +327,12 @@ export default function Portfolio() {
   }, []);
 
   useEffect(() => {
-    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-      setDarkMode(true);
-      document.documentElement.classList.add('dark');
-    } else {
+    if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
       setDarkMode(false);
-      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.add('light');
+    } else {
+      setDarkMode(true);
+      document.documentElement.classList.remove('light');
     }
   }, []);
 
