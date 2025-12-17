@@ -47,10 +47,10 @@ export default async function EditPage({ params }: { params: Promise<{ section: 
     if (isList) {
         return (
             <div className="p-8 md:p-12 max-w-5xl mx-auto">
-                <Link href="/admin" className="text-blue-600 hover:underline flex items-center gap-2 mb-6">
+                <Link href="/admin" className="px-4 py-2 mb-6 w-fit bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
                     <ArrowLeft size={16} /> Quay lại Admin Dashboard
                 </Link>
-                <h1 className="text-3xl font-bold text-slate-900 mb-8">{title}</h1>
+                <h1 className="text-3xl font-bold text-slate-900 mb-8 dark:text-slate-200">{title}</h1>
 
                 <EditForm sectionName={section as 'personalInfo' | 'skills' | 'experiences' | 'projects'} initialData={sectionData} updateAction={updateSectionData} deleteAction={deleteListItem} />
             </div>
@@ -60,10 +60,10 @@ export default async function EditPage({ params }: { params: Promise<{ section: 
     else {
          return (
             <div className="p-8 md:p-12 max-w-3xl mx-auto">
-                <Link href="/admin" className="text-blue-600 hover:underline flex items-center gap-2 mb-6">
+                <Link href="/admin" className="px-4 py-2 mb-6 w-fit bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
                     <ArrowLeft size={16} /> Quay lại Admin Dashboard
                 </Link>
-                <h1 className="text-3xl font-bold text-slate-900 mb-8">{title} (Chỉnh sửa trực tiếp)</h1>
+                <h1 className="text-3xl font-bold text-slate-900 mb-8 dark:text-slate-200">{title} (Chỉnh sửa trực tiếp)</h1>
                  
                 <EditForm sectionName={section as 'personalInfo' | 'skills' | 'experiences' | 'projects'} initialData={sectionData} updateAction={updateSectionData} deleteAction={deleteListItem} isSingleObject={true} />
             </div>

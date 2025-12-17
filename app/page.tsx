@@ -7,6 +7,9 @@ import {
   GitCommit, Calendar, ArrowUp, Check, Copy, X
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
+import { submitContactForm } from '@/lib/adminActions';
+import { Send, User, AtSign, MessageSquare, Paperclip } from 'lucide-react';
+import { trackVisit } from '@/lib/analyticsActions';
 
 // --- COMPONENTS ---
 
@@ -285,6 +288,115 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
   );
 }
 
+// COMPONENT CONTACT FORM (MỚI)
+function ContactSection() {
+  const [status, setStatus] = useState<any>(null);
+  const [isPending, setIsPending] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setIsPending(true);
+    const res = await submitContactForm(formData);
+    setStatus(res);
+    setIsPending(false);
+    if (res.success && formRef.current) {
+      formRef.current.reset();
+      // Tự động tắt thông báo sau 3s
+      setTimeout(() => setStatus(null), 5000);
+    }
+  }
+
+  return (
+    <section id="contact" className="mb-32 scroll-mt-28">
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Get In Touch</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+          Interested in working together? Drop me a message!
+        </p>
+      </div>
+
+      <div className="max-w-2xl mx-auto">
+        <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
+          {/* Decor */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
+
+          <form ref={formRef} action={handleSubmit} className="space-y-6 relative z-10">
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <User size={16} /> Name
+                </label>
+                <input
+                  type="text" name="name" required placeholder="John Doe"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                  <AtSign size={16} /> Email
+                </label>
+                <input
+                  type="email" name="email" required placeholder="john@example.com"
+                  className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <MessageSquare size={16} /> Message
+              </label>
+              <textarea
+                name="message" required rows={4} placeholder="Let's build something amazing..."
+                className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
+              ></textarea>
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2">
+                <Paperclip size={16} /> Attachments (Max 3 files)
+              </label>
+              <input
+                type="file"
+                name="files"
+                multiple
+                accept="image/*,.pdf,.doc,.docx"
+                className="block w-full text-sm text-slate-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-blue-50 file:text-blue-700
+                      hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400
+                      cursor-pointer"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              disabled={isPending}
+              className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all"
+            >
+              {isPending ? "Sending..." : <>Send Message <Send size={20} /></>}
+            </motion.button>
+
+            {/* Notification Message */}
+            <AnimatePresence>
+              {status && (
+                <motion.div
+                  initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                  className={`p-4 rounded-xl text-center text-sm font-medium ${status.success ? 'bg-green-500/20 text-green-600 dark:text-green-400' : 'bg-red-500/20 text-red-600 dark:text-red-400'}`}
+                >
+                  {status.message}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </form>
+        </div>
+      </div>
+    </section>
+  );
+}
 // --- MAIN PAGE ---
 
 export default function Portfolio() {
@@ -324,6 +436,7 @@ export default function Portfolio() {
       }
     }
     fetchData();
+    trackVisit();
   }, []);
 
   useEffect(() => {
@@ -350,7 +463,7 @@ export default function Portfolio() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const sections = ['about', 'skills', 'experience', 'projects'];
+      const sections = ['about', 'skills', 'experience', 'projects', 'contact'];
       const current = sections.find(section => {
         const element = document.getElementById(section);
         if (element) {
@@ -425,7 +538,7 @@ export default function Portfolio() {
                 <span className="font-bold text-slate-800 dark:text-white mr-4 hidden md:block">
                   {personalInfo.name.split(' ').pop()}
                 </span>
-                {['About', 'Skills', 'Experience', 'Projects'].map((item) => {
+                {['About', 'Skills', 'Experience', 'Projects', 'Contact'].map((item) => {
                   const id = item.toLowerCase();
                   const isActive = activeSection === id;
                   return (
@@ -657,7 +770,7 @@ export default function Portfolio() {
             </section>
 
             {/* PROJECTS SECTION */}
-            <section id="projects" className="scroll-mt-28">
+            <section id="projects" className="mb-32 scroll-mt-28">
               <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Featured Projects</h2>
                 <p className="text-slate-500 dark:text-slate-400">Selected works demonstrating my capabilities.</p>
@@ -670,6 +783,7 @@ export default function Portfolio() {
                 ))}
               </div>
             </section>
+            <ContactSection />
 
           </main>
 

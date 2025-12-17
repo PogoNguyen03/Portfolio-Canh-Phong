@@ -249,7 +249,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
 
         return (
             <form onSubmit={handleSubmit} className="bg-white p-6 rounded-xl shadow-lg border border-slate-200 space-y-4">
-                <h3 className="text-xl font-bold mb-4">{editItem.id ? 'Sửa mục' : 'Thêm mới'}</h3>
+                <h3 className="text-xl font-bold mb-4 text-black">{editItem.id ? 'Sửa mục' : 'Thêm mới'}</h3>
                 
                 {fields.map(field => (
                     <div key={field}>
@@ -260,7 +260,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
                                 value={editItem[field] || ''}
                                 onChange={handleFormChange}
                                 rows={3}
-                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500 text-black"
                                 required
                             />
                         ) : (
@@ -269,7 +269,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
                                 name={field}
                                 value={editItem[field] || ''}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  text-black"
                                 required
                             />
                         )}
@@ -309,7 +309,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
                             value={editItem[field] || ''}
                             onChange={(e) => handleSkillChange(field, e.target.value)}
                             rows={3}
-                            className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                            className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  text-black"
                             placeholder="Nhập các kỹ năng cách nhau bởi dấu phẩy..."
                             required
                         />
@@ -417,7 +417,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
                                 value={editItem[field] || ''}
                                 onChange={handleFormChange}
                                 rows={5}
-                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  text-black"
                                 required
                             />
                         ) : (
@@ -426,7 +426,7 @@ export function EditForm({ sectionName, initialData, updateAction, deleteAction,
                                 name={field}
                                 value={editItem[field] || ''}
                                 onChange={handleFormChange}
-                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
+                                className="w-full p-2 border border-slate-300 rounded-lg focus:ring-blue-500 focus:border-blue-500  text-black"
                                 required
                             />
                         )}
