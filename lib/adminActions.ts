@@ -26,7 +26,7 @@ export async function writeData(data: any) {
     return { success: true, message: "Dữ liệu đã được cập nhật thành công!" };
   } catch (error) {
     console.error("Error writing JSON file:", error);
-    return { success: false, message: `Lỗi ghi file: ${error.message}` };
+    return { success: false, message: `Lỗi ghi file: ${(error as Error).message}` };
   }
 }
 

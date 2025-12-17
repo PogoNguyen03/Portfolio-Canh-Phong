@@ -1,13 +1,16 @@
+// app/page.tsx
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
 import {
   Github, Mail, MapPin, ExternalLink, Code2,
   Layers, Terminal, Sun, Moon, Monitor,
-  GitCommit, Calendar, ArrowUp, Check, Copy // Thêm icon ArrowUp, Check, Copy
+  GitCommit, Calendar, ArrowUp, Check, Copy, X
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
 
-// --- NEW COMPONENT: Terminal Boot Intro ---
+// --- COMPONENTS ---
+
+// 1. Terminal Intro (Có nút Skip)
 function TerminalIntro({ onComplete }: { onComplete: () => void }) {
   const [lines, setLines] = useState<string[]>([]);
   const bootSequence = [
@@ -22,15 +25,20 @@ function TerminalIntro({ onComplete }: { onComplete: () => void }) {
 
   useEffect(() => {
     let delay = 0;
+    const timeouts: NodeJS.Timeout[] = [];
+
     bootSequence.forEach((line, index) => {
-      delay += Math.random() * 300 + 100; // Random delay gõ phím
-      setTimeout(() => {
+      delay += Math.random() * 300 + 100;
+      const timeout = setTimeout(() => {
         setLines(prev => [...prev, line]);
         if (index === bootSequence.length - 1) {
-          setTimeout(onComplete, 800); // Kết thúc sau dòng cuối 0.8s
+          setTimeout(onComplete, 800);
         }
       }, delay);
+      timeouts.push(timeout);
     });
+
+    return () => timeouts.forEach(clearTimeout);
   }, []);
 
   return (
@@ -40,6 +48,14 @@ function TerminalIntro({ onComplete }: { onComplete: () => void }) {
       exit={{ opacity: 0, y: -50 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Skip Button */}
+      <button
+        onClick={onComplete}
+        className="absolute top-8 right-8 text-slate-500 hover:text-white text-xs border border-slate-700 px-3 py-1 rounded hover:border-slate-500 transition-colors"
+      >
+        [ESC] SKIP
+      </button>
+
       <div className="max-w-2xl mx-auto w-full">
         {lines.map((line, i) => (
           <motion.div key={i} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
@@ -56,7 +72,7 @@ function TerminalIntro({ onComplete }: { onComplete: () => void }) {
   );
 }
 
-// --- NEW COMPONENT: Scroll To Top Button ---
+// 2. Scroll To Top Button
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -90,7 +106,7 @@ function ScrollToTop() {
   );
 }
 
-// --- OLD COMPONENTS (Giữ nguyên) ---
+// 3. Typewriter
 const Typewriter = ({ texts, speed = 150, delay = 2000 }: { texts: string[], speed?: number, delay?: number }) => {
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
   const [currentText, setCurrentText] = useState('');
@@ -124,6 +140,7 @@ const Typewriter = ({ texts, speed = 150, delay = 2000 }: { texts: string[], spe
   );
 };
 
+// 4. Skill Badge
 function SkillBadge({ item }: { item: string }) {
   return (
     <motion.div
@@ -139,6 +156,7 @@ function SkillBadge({ item }: { item: string }) {
   );
 }
 
+// 5. Project Card (Spotlight Effect)
 function ProjectCard({ project, index }: { project: any, index: number }) {
   const divRef = useRef<HTMLDivElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -222,12 +240,13 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   );
 }
 
+// 6. Experience Timeline
 function ExperienceItem({ exp, index }: { exp: any, index: number }) {
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}
       whileInView={{ opacity: 1, x: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: true, amount: 0.5 }}
       transition={{ delay: index * 0.1 }}
       className="relative pl-8 md:pl-0"
     >
@@ -271,13 +290,13 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
 export default function Portfolio() {
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [showIntro, setShowIntro] = useState(true); // Control Intro State
+  const [showIntro, setShowIntro] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
   const [activeSection, setActiveSection] = useState('about');
   const [githubUsername, setGithubUsername] = useState('');
   const [selectedYear, setSelectedYear] = useState<number | null>(null);
 
-  // Copy Email Logic
+  // Copy Email State
   const [copied, setCopied] = useState(false);
   const handleCopyEmail = (email: string) => {
     navigator.clipboard.writeText(email);
@@ -369,17 +388,31 @@ export default function Portfolio() {
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
 
-          <ScrollToTop /> {/* Nút Scroll Top */}
+          <ScrollToTop />
 
           <motion.div
             className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70]"
             style={{ scaleX }}
           />
 
-          <div className="fixed inset-0 pointer-events-none z-0">
+          {/* --- NEW: Moving Gradient Orbs Background --- */}
+          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+            {/* Grid */}
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
-            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-blue-500/10 dark:bg-blue-500/20 rounded-full blur-[120px] animate-pulse" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-purple-500/10 dark:bg-purple-500/20 rounded-full blur-[120px] animate-pulse delay-1000" />
+
+            {/* Blue Orb - Moves around */}
+            <motion.div
+              animate={{ x: [0, 50, 0], y: [0, -50, 0] }}
+              transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
+              className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[120px]"
+            />
+
+            {/* Purple Orb - Moves opposite */}
+            <motion.div
+              animate={{ x: [0, -50, 0], y: [0, 50, 0] }}
+              transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 1 }}
+              className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/10 dark:bg-purple-600/20 rounded-full blur-[120px]"
+            />
           </div>
 
           <div className="fixed top-6 left-0 right-0 flex justify-center z-50 px-4 pointer-events-none">
@@ -577,7 +610,8 @@ export default function Portfolio() {
                   </div>
                 </div>
               </div>
-              {/* CẬP NHẬT: GitHub Activity Graph (Có chọn Năm) */}
+
+              {/* FIXED: GitHub Activity Graph (Deno API) */}
               <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
