@@ -1,11 +1,14 @@
 // lib/analyticsActions.ts
 "use server";
 
-import fs from 'fs/promises';
-import path from 'path';
+// LƯU Ý QUAN TRỌNG:
+// - TRÊN VERCEL, KHÔNG ĐƯỢC GHI FILE VÀO /data/*.json (EROFS: read-only file system)
+// - FILE analytics.json chỉ dùng làm "seed" ban đầu, toàn bộ ghi/đọc động phải qua Vercel Blob
+
+import { list, put } from '@vercel/blob';
 import { headers } from 'next/headers';
 
-const ANALYTICS_FILE_PATH = path.join(process.cwd(), 'data', 'analytics.json');
+const ANALYTICS_BLOB_NAME = 'database/analytics.json';
 
 // Hàm lấy IP người dùng
 function getIP(headersList: Headers) {
@@ -21,6 +24,33 @@ function getIP(headersList: Headers) {
   return "Unknown"; // Hoặc '127.0.0.1' nếu localhost
 }
 
+// Helper: đọc logs từ Blob (nếu không có thì trả mảng rỗng)
+async function readAnalyticsFromBlob(): Promise<any[]> {
+  try {
+    const { blobs } = await list({ prefix: ANALYTICS_BLOB_NAME, limit: 1 });
+    if (blobs.length === 0) {
+      return [];
+    }
+    const res = await fetch(blobs[0].url, { cache: 'no-store' });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return Array.isArray(json) ? json : [];
+  } catch (e) {
+    console.error('Analytics read error:', e);
+    return [];
+  }
+}
+
+// Helper: ghi logs lên Blob (KHÔNG ĐỘNG VÀO FILE LOCAL)
+async function writeAnalyticsToBlob(logs: any[]): Promise<void> {
+  const json = JSON.stringify(logs, null, 2);
+  await put(ANALYTICS_BLOB_NAME, json, {
+    access: 'public',
+    addRandomSuffix: false,
+    contentType: 'application/json',
+  });
+}
+
 // 1. Ghi nhận lượt truy cập (Gọi ở trang chủ)
 export async function trackVisit() {
   try {
@@ -29,19 +59,15 @@ export async function trackVisit() {
     const userAgent = headersList.get('user-agent') || 'Unknown Device';
     const timestamp = new Date().toISOString();
 
-    let logs = [];
-    try {
-      const data = await fs.readFile(ANALYTICS_FILE_PATH, 'utf-8');
-      logs = JSON.parse(data);
-    } catch (e) {
-      logs = [];
-    }
+    // Đọc logs hiện tại từ Blob
+    const logs = await readAnalyticsFromBlob();
 
     // Thêm log mới
     logs.push({ ip, userAgent, timestamp });
 
-    // Lưu lại
-    await fs.writeFile(ANALYTICS_FILE_PATH, JSON.stringify(logs, null, 2), 'utf-8');
+    // Ghi lại lên Blob
+    await writeAnalyticsToBlob(logs);
+
     return { success: true };
   } catch (error) {
     console.error("Analytics Error:", error);
@@ -52,19 +78,15 @@ export async function trackVisit() {
 // 2. Lấy dữ liệu thống kê (Gọi ở Admin)
 export async function getAnalyticsData() {
   try {
-    const data = await fs.readFile(ANALYTICS_FILE_PATH, 'utf-8');
-    const logs = JSON.parse(data);
+    const logs = await readAnalyticsFromBlob();
 
-    // Tính toán
     const totalViews = logs.length;
-    // Đếm số IP duy nhất (Unique Visitors)
     const uniqueIPs = new Set(logs.map((log: any) => log.ip)).size;
-    
-    // Lấy 5 log gần nhất để hiển thị chi tiết
     const recentLogs = logs.slice(-5).reverse();
 
     return { totalViews, uniqueIPs, recentLogs };
   } catch (error) {
+    console.error("Analytics read error:", error);
     return { totalViews: 0, uniqueIPs: 0, recentLogs: [] };
   }
 }
