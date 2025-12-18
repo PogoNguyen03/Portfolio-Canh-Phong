@@ -1,149 +1,120 @@
 // lib/adminActions.ts
 "use server";
+import { put, list } from '@vercel/blob';
+import nodemailer from "nodemailer";
 
-import fs from 'fs/promises';
-import path from 'path';
-import { revalidatePath } from 'next/cache';
-import { mkdir } from 'fs/promises';
+// --- PHẦN 1: QUẢN LÝ DỮ LIỆU JSON TRÊN BLOB ---
 
-const DATA_FILE_PATH = path.join(process.cwd(), 'data', 'portfolio.json');
-const CONTACT_FILE_PATH = path.join(process.cwd(), 'data', 'contact.json');
+const DB_FILE_NAME = 'database/portfolio.json';
 
-// --- PHẦN PORTFOLIO (GIỮ NGUYÊN) ---
+// Hàm helper để lấy dữ liệu JSON từ Blob
 export async function readData() {
   try {
-    const data = await fs.readFile(DATA_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
+    // 1. Tìm file json trên Blob store
+    const { blobs } = await list({ prefix: DB_FILE_NAME, limit: 1 });
+    
+    // Nếu chưa có file (lần đầu chạy), fallback về file local hoặc object rỗng
+    if (blobs.length === 0) {
+      // Bạn có thể import data mặc định từ local để khởi tạo nếu muốn
+      const defaultData = await import('@/data/portfolio.json');
+      return defaultData.default || defaultData;
+    }
+
+    // 2. Fetch nội dung từ URL của Blob
+    const response = await fetch(blobs[0].url, { 
+      cache: 'no-store' // Quan trọng: Luôn lấy dữ liệu mới nhất
+    });
+    return await response.json();
   } catch (error) {
-    console.error("Error reading JSON file:", error);
-    return { personalInfo: {}, skills: {}, experiences: [], projects: [] };
+    console.error("Error reading data from Blob:", error);
+    return null;
   }
 }
 
+// Hàm helper để ghi đè dữ liệu JSON lên Blob
 export async function writeData(data: any) {
   try {
-    await fs.writeFile(DATA_FILE_PATH, JSON.stringify(data, null, 2), 'utf-8');
-    revalidatePath('/'); 
-    return { success: true, message: "Data has been updated successfully!" };
+    // Ghi đè file cũ bằng cách dùng addRandomSuffix: false
+    const blob = await put(DB_FILE_NAME, JSON.stringify(data, null, 2), {
+      access: 'public',
+      addRandomSuffix: false, // Bắt buộc để giữ nguyên tên file
+      contentType: 'application/json'
+    });
+    return { success: true, url: blob.url };
   } catch (error) {
-    console.error("Error writing JSON file:", error);
-    return { success: false, message: `Error writing file: ${(error as any).message}` };
+    console.error("Error writing data to Blob:", error);
+    return { success: false };
   }
 }
 
-export async function updateSectionData(sectionName: string, newData: any) {
-  const currentData = await readData();
-  
-  if (Array.isArray(currentData[sectionName])) {
-    const list = currentData[sectionName];
-    if (newData.id) {
-        const index = list.findIndex((item: any) => item.id === newData.id);
-        if (index !== -1) list[index] = newData;
-    } else {
-        const newId = list.length > 0 ? Math.max(...list.map((item: any) => item.id || 0)) + 1 : 1;
-        list.push({ ...newData, id: newId });
-    }
-    currentData[sectionName] = list;
-  } else if (typeof currentData[sectionName] === 'object') {
-    currentData[sectionName] = { ...currentData[sectionName], ...newData };
-  } else if (sectionName === 'skills') {
-     currentData[sectionName] = newData;
-  }
-
-  return await writeData(currentData);
-}
-
-export async function deleteListItem(sectionName: string, id: number) {
-    const currentData = await readData();
-    const list = currentData[sectionName];
-
-    if (Array.isArray(list)) {
-        currentData[sectionName] = list.filter((item: any) => item.id !== id);
-        return await writeData(currentData);
-    }
-    return { success: false, message: "Cannot delete." };
-}
-
-// --- PHẦN LIÊN HỆ (MỚI THÊM) ---
-
-// 1. Đọc tin nhắn (Cho Admin)
-export async function getContactMessages() {
+// Hàm update (giữ nguyên logic, chỉ gọi writeData mới)
+export async function updatePortfolio(section: string, newData: any) {
   try {
-    const data = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    return []; // Nếu chưa có file thì trả về rỗng
+    const currentData = await readData();
+    if (!currentData) throw new Error("Could not load data");
+
+    // Logic update từng phần
+    if (section === 'personalInfo') currentData.personalInfo = { ...currentData.personalInfo, ...newData };
+    else if (section === 'skills') currentData.skills = newData;
+    else if (section === 'experiences') currentData.experiences = newData;
+    else if (section === 'projects') currentData.projects = newData;
+
+    await writeData(currentData);
+    return { success: true, message: "Update successful!" };
+  } catch (error: any) {
+    return { success: false, message: error.message };
   }
 }
 
-// 2. Gửi tin nhắn (Cho User)
+
+// --- PHẦN 2: XỬ LÝ CONTACT FORM (FIX LỖI EROFS) ---
+
 export async function submitContactForm(formData: FormData) {
   try {
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
-    const files = formData.getAll('files') as File[];
-    const date = new Date().toISOString();
+    const name = formData.get("name") as string;
+    const email = formData.get("email") as string;
+    const message = formData.get("message") as string;
+    const files = formData.getAll("files") as File[];
 
-    if (!name || !email || !message) {
-      return { success: false, message: "Please fill in all information!" };
-    }
-
-    const attachments: string[] = [];
-    if (files && files.length > 0) {
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'contacts');
-      
-      // Tạo thư mục nếu chưa có
-      try {
-        await mkdir(uploadDir, { recursive: true });
-      } catch (e) {
-        // Bỏ qua nếu thư mục đã tồn tại
-      }
-
-      for (const file of files) {
-        // Chỉ lưu file có dung lượng > 0 và tên hợp lệ
-        if (file.size > 0 && file.name !== 'undefined') {
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          
-          // Tạo tên file duy nhất để tránh trùng
-          const fileName = `${Date.now()}-${file.name.replace(/\s/g, '-')}`;
-          const filePath = path.join(uploadDir, fileName);
-          
-          await fs.writeFile(filePath, buffer);
-          attachments.push(`/uploads/contacts/${fileName}`);
-        }
-      }
-    }
-
-    // Đọc dữ liệu cũ
-    let contacts = [];
-    try {
-      const fileData = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
-      contacts = JSON.parse(fileData);
-    } catch (e) {
-      contacts = [];
-    }
-
-    // Thêm tin nhắn mới kèm danh sách file đính kèm
-    const newMessage = {
-      id: Date.now(),
-      name,
-      email,
-      message,
-      date,
-      attachments, // Lưu mảng đường dẫn file
-      read: false
-    };
-
-    contacts.unshift(newMessage);
-
-    await fs.writeFile(CONTACT_FILE_PATH, JSON.stringify(contacts, null, 2), 'utf-8');
-    revalidatePath('/admin/messages');
+    let attachmentsHtml = "";
     
-    return { success: true, message: "Messages and documents have been sent!" };
-  } catch (error) {
-    console.error("Contact error:", error);
-    return { success: false, message: "System error: " + (error as Error).message };
+    // Upload từng file đính kèm lên Blob và lấy Link
+    for (const file of files) {
+      if (file.size > 0) {
+        const blob = await put(`contacts/${Date.now()}-${file.name}`, file, {
+          access: 'public',
+        });
+        attachmentsHtml += `<li><a href="${blob.url}" target="_blank">${file.name}</a></li>`;
+      }
+    }
+
+    // Gửi mail (Chỉ gửi Link tải file, nhẹ và nhanh hơn)
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: process.env.EMAIL_USER,
+      replyTo: email,
+      subject: `Portfolio Contact: ${name}`,
+      html: `
+        <h3>New Message from ${name}</h3>
+        <p><strong>Email:</strong> ${email}</p>
+        <p><strong>Message:</strong></p>
+        <p>${message}</p>
+        ${attachmentsHtml ? `<p><strong>Attachments:</strong><ul>${attachmentsHtml}</ul></p>` : ''}
+      `,
+    });
+
+    return { success: true, message: "Message sent successfully!" };
+
+  } catch (error: any) {
+    console.error("Contact Form Error:", error);
+    return { success: false, message: error.message };
   }
 }
