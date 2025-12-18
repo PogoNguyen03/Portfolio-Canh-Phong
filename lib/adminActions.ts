@@ -77,18 +77,20 @@ export async function submitContactForm(formData: FormData) {
     const files = formData.getAll("files") as File[];
 
     let attachmentsHtml = "";
-    
-    // Upload từng file đính kèm lên Blob và lấy Link
+    const attachmentLinks: string[] = []; // Mảng lưu link để lưu vào DB
+
+    // 1. Upload file đính kèm
     for (const file of files) {
       if (file.size > 0) {
         const blob = await put(`contacts/${Date.now()}-${file.name}`, file, {
           access: 'public',
         });
         attachmentsHtml += `<li><a href="${blob.url}" target="_blank">${file.name}</a></li>`;
+        attachmentLinks.push(blob.url);
       }
     }
 
-    // Gửi mail (Chỉ gửi Link tải file, nhẹ và nhanh hơn)
+    // 2. Gửi Email (Logic cũ)
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -111,7 +113,31 @@ export async function submitContactForm(formData: FormData) {
       `,
     });
 
-    return { success: true, message: "Message sent successfully!" };
+    // 3. LƯU TIN NHẮN VÀO BLOB (Logic Mới)
+    // Lấy danh sách tin nhắn cũ
+    const currentMessages = await getContactMessages();
+    
+    // Tạo object tin nhắn mới
+    const newMessageData = {
+      id: Date.now(),
+      name,
+      email,
+      message,
+      date: new Date().toISOString(),
+      attachments: attachmentLinks
+    };
+
+    // Thêm tin nhắn mới vào đầu danh sách
+    const updatedMessages = [newMessageData, ...currentMessages];
+
+    // Ghi đè file JSON
+    await put(MSG_FILE_NAME, JSON.stringify(updatedMessages, null, 2), {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: 'application/json'
+    });
+
+    return { success: true, message: "Message sent and saved successfully!" };
 
   } catch (error: any) {
     console.error("Contact Form Error:", error);
@@ -137,5 +163,47 @@ export async function deleteListItem(section: string, indexToRemove: number) {
   } catch (error: any) {
     console.error("Delete error:", error);
     return { success: false, message: error.message };
+  }
+}
+
+// --- PHẦN 3: QUẢN LÝ TIN NHẮN (MESSAGES) ---
+
+const MSG_FILE_NAME = 'database/messages.json';
+
+// 1. Hàm lấy danh sách tin nhắn (Fix lỗi getContactMessages not found)
+export async function getContactMessages() {
+  try {
+    const { blobs } = await list({ prefix: MSG_FILE_NAME, limit: 1 });
+    
+    if (blobs.length === 0) {
+      return []; // Trả về mảng rỗng nếu chưa có tin nhắn nào
+    }
+
+    const response = await fetch(blobs[0].url, { cache: 'no-store' });
+    return await response.json();
+  } catch (error) {
+    console.error("Error reading messages:", error);
+    return [];
+  }
+}
+
+// 2. Hàm xóa tin nhắn (Thường trang Admin sẽ cần hàm này)
+export async function deleteMessage(indexToRemove: number) {
+  try {
+    const messages = await getContactMessages();
+    // Lọc bỏ tin nhắn tại vị trí index
+    const newMessages = messages.filter((_: any, idx: number) => idx !== indexToRemove);
+    
+    // Lưu lại danh sách mới
+    await put(MSG_FILE_NAME, JSON.stringify(newMessages, null, 2), {
+      access: 'public',
+      addRandomSuffix: false,
+      contentType: 'application/json'
+    });
+    
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting message:", error);
+    return { success: false };
   }
 }
