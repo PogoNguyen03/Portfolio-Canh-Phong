@@ -13,6 +13,8 @@ import {
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform, animate, MotionValue } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
 import { trackVisit } from '@/lib/analyticsActions';
+import Spline from '@splinetool/react-spline';
+
 
 // --- COMPONENTS CON (Đã tối ưu) ---
 
@@ -125,54 +127,54 @@ const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }
 // (Giữ nguyên code của bạn cho các phần này để tiết kiệm diện tích, chỉ thay đổi ProjectCard bên dưới)
 
 function ScrollToTop() {
-    const [isVisible, setIsVisible] = useState(false);
-    useEffect(() => {
-      const toggleVisibility = () => window.scrollY > 500 ? setIsVisible(true) : setIsVisible(false);
-      window.addEventListener("scroll", toggleVisibility);
-      return () => window.removeEventListener("scroll", toggleVisibility);
-    }, []);
-    const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
-    return (
-      <AnimatePresence>
-        {isVisible && (
-          <motion.button initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} onClick={scrollToTop} className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1"><ArrowUp size={24} /></motion.button>
-        )}
-      </AnimatePresence>
-    );
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const toggleVisibility = () => window.scrollY > 500 ? setIsVisible(true) : setIsVisible(false);
+    window.addEventListener("scroll", toggleVisibility);
+    return () => window.removeEventListener("scroll", toggleVisibility);
+  }, []);
+  const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+  return (
+    <AnimatePresence>
+      {isVisible && (
+        <motion.button initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} onClick={scrollToTop} className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1"><ArrowUp size={24} /></motion.button>
+      )}
+    </AnimatePresence>
+  );
 }
 
 function SkillBadge({ item }: { item: string }) {
-    return (<motion.div whileHover={{ scale: 1.05, y: -2 }} className="px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-700 dark:text-slate-200 text-xs md:text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm cursor-default flex items-center gap-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>{item}</motion.div>);
+  return (<motion.div whileHover={{ scale: 1.05, y: -2 }} className="px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-700 dark:text-slate-200 text-xs md:text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm cursor-default flex items-center gap-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>{item}</motion.div>);
 }
 
 function ExperienceItem({ exp, index }: { exp: any, index: number }) {
-    return (
-      <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ delay: index * 0.1 }} className="relative pl-8 md:pl-0">
-        <div className="md:grid md:grid-cols-12 md:gap-8 group">
-          <div className="hidden md:block md:col-span-3 text-right pt-2"><span className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 border border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">{exp.period}</span></div>
-          <div className="absolute left-0 md:left-auto md:relative md:col-span-1 flex justify-center h-full"><div className="h-full w-[2px] bg-slate-200 dark:bg-slate-800 relative group-hover:bg-blue-200 dark:group-hover:bg-blue-900 transition-colors"><div className="absolute top-2 -left-[5px] w-3 h-3 bg-white dark:bg-slate-900 border-2 border-blue-500 rounded-full z-10 shadow-[0_0_0_4px_rgba(59,130,246,0.2)]"></div></div></div>
-          <div className="md:col-span-8 pb-12">
-            <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all relative z-10">
-              <div className="md:hidden mb-2"><span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{exp.period}</span></div>
-              <h4 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">{exp.role}</h4>
-              <p className="text-blue-600 dark:text-blue-400 font-medium mb-4">{exp.company}</p>
-              <ul className="space-y-3">{exp.description.map((desc: string, i: number) => (<li key={i} className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex items-start gap-3"><span className="mt-1.5 w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0" />{desc}</li>))}</ul>
-            </div>
+  return (
+    <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ delay: index * 0.1 }} className="relative pl-8 md:pl-0">
+      <div className="md:grid md:grid-cols-12 md:gap-8 group">
+        <div className="hidden md:block md:col-span-3 text-right pt-2"><span className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 border border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">{exp.period}</span></div>
+        <div className="absolute left-0 md:left-auto md:relative md:col-span-1 flex justify-center h-full"><div className="h-full w-[2px] bg-slate-200 dark:bg-slate-800 relative group-hover:bg-blue-200 dark:group-hover:bg-blue-900 transition-colors"><div className="absolute top-2 -left-[5px] w-3 h-3 bg-white dark:bg-slate-900 border-2 border-blue-500 rounded-full z-10 shadow-[0_0_0_4px_rgba(59,130,246,0.2)]"></div></div></div>
+        <div className="md:col-span-8 pb-12">
+          <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg hover:border-blue-300 dark:hover:border-blue-700 transition-all relative z-10">
+            <div className="md:hidden mb-2"><span className="text-xs font-bold text-slate-500 uppercase tracking-wide">{exp.period}</span></div>
+            <h4 className="text-xl font-bold text-slate-800 dark:text-white flex items-center gap-2">{exp.role}</h4>
+            <p className="text-blue-600 dark:text-blue-400 font-medium mb-4">{exp.company}</p>
+            <ul className="space-y-3">{exp.description.map((desc: string, i: number) => (<li key={i} className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex items-start gap-3"><span className="mt-1.5 w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0" />{desc}</li>))}</ul>
           </div>
         </div>
-      </motion.div>
-    );
+      </div>
+    </motion.div>
+  );
 }
 
 function TiltCard({ children }: { children: React.ReactNode }) {
-    const x = useMotionValue(0); const y = useMotionValue(0);
-    const mouseX = useSpring(x, { stiffness: 150, damping: 10 }); const mouseY = useSpring(y, { stiffness: 150, damping: 10 });
-    function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
-      const { left, top, width, height } = currentTarget.getBoundingClientRect();
-      x.set((clientX - left) / width - 0.5); y.set((clientY - top) / height - 0.5);
-    }
-    const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]); const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
-    return (<motion.div onMouseMove={handleMouseMove} onMouseLeave={() => { x.set(0); y.set(0); }} style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-full h-full perspective-1000"><div style={{ transform: "translateZ(20px)" }} className="h-full">{children}</div></motion.div>);
+  const x = useMotionValue(0); const y = useMotionValue(0);
+  const mouseX = useSpring(x, { stiffness: 150, damping: 10 }); const mouseY = useSpring(y, { stiffness: 150, damping: 10 });
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    x.set((clientX - left) / width - 0.5); y.set((clientY - top) / height - 0.5);
+  }
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]); const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
+  return (<motion.div onMouseMove={handleMouseMove} onMouseLeave={() => { x.set(0); y.set(0); }} style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-full h-full perspective-1000"><div style={{ transform: "translateZ(20px)" }} className="h-full">{children}</div></motion.div>);
 }
 
 // 5. Project Card (Đã tối ưu dùng next/image)
@@ -203,12 +205,12 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
             {coverImage ? (
               <div className="relative w-full h-full">
                 {/* Dùng Image của Next.js để tối ưu load ảnh */}
-                <Image 
-                  src={coverImage} 
-                  alt={project.name} 
-                  fill 
+                <Image
+                  src={coverImage}
+                  alt={project.name}
+                  fill
                   sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover transition-transform duration-700 group-hover/img:scale-105" 
+                  className="object-cover transition-transform duration-700 group-hover/img:scale-105"
                   unoptimized={true}
                 />
                 <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
@@ -225,72 +227,74 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
 
 // ... ContactSection bạn giữ nguyên code cũ ...
 function ContactSection({ personalInfo }: { personalInfo: any }) {
-    const [status, setStatus] = useState<any>(null);
-    const [isPending, setIsPending] = useState(false);
-    const formRef = useRef<HTMLFormElement>(null);
-  
-    async function handleSubmit(formData: FormData) {
-      setIsPending(true);
-      const res = await submitContactForm(formData);
-      setStatus(res);
-      setIsPending(false);
-      if (res.success && formRef.current) {
-        formRef.current.reset();
-        setTimeout(() => setStatus(null), 5000);
-      }
+  const [status, setStatus] = useState<any>(null);
+  const [isPending, setIsPending] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setIsPending(true);
+    const res = await submitContactForm(formData);
+    setStatus(res);
+    setIsPending(false);
+    if (res.success && formRef.current) {
+      formRef.current.reset();
+      setTimeout(() => setStatus(null), 5000);
     }
-  
-    return (
-      <section id="contact" className="mb-32 scroll-mt-28">
-        <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Get In Touch</h2>
-          <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
-            Interested in working together? Drop me a message or contact me directly!
-          </p>
-        </div>
-  
-        <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
-          <div className="space-y-6">
-            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 h-full flex flex-col justify-center">
-              <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Contact Information</h3>
-              <div className="space-y-8">
-                <div className="flex items-center gap-5">
-                  <div className="p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl"><User size={24} /></div>
-                  <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.name}</p></div>
-                </div>
-                <div className="flex items-center gap-5">
-                  <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl"><Phone size={24} /></div>
-                  <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone Number</p><a href={`tel:${personalInfo.phone}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{personalInfo.phone}</a></div>
-                </div>
-                <div className="flex items-center gap-5">
-                  <div className="p-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl"><Mail size={24} /></div>
-                  <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email Address</p><a href={`mailto:${personalInfo.email}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-all">{personalInfo.email}</a></div>
-                </div>
-                <div className="flex items-center gap-5">
-                  <div className="p-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl"><MapPin size={24} /></div>
-                  <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Location</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.location}</p></div>
-                </div>
+  }
+
+  return (
+    <section id="contact" className="mb-32 scroll-mt-28">
+      <div className="text-center mb-16">
+        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Get In Touch</h2>
+        <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">
+          Interested in working together? Drop me a message or contact me directly!
+        </p>
+      </div>
+
+      <div className="max-w-6xl mx-auto grid lg:grid-cols-2 gap-12">
+        <div className="space-y-6">
+          <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 h-full flex flex-col justify-center">
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-8">Contact Information</h3>
+            <div className="space-y-8">
+              <div className="flex items-center gap-5">
+                <div className="p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl"><User size={24} /></div>
+                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.name}</p></div>
+              </div>
+              <div className="flex items-center gap-5">
+                <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl"><Phone size={24} /></div>
+                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone Number</p><a href={`tel:${personalInfo.phone}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{personalInfo.phone}</a></div>
+              </div>
+              <div className="flex items-center gap-5">
+                <div className="p-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl"><Mail size={24} /></div>
+                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email Address</p><a href={`mailto:${personalInfo.email}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-all">{personalInfo.email}</a></div>
+              </div>
+              <div className="flex items-center gap-5">
+                <div className="p-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl"><MapPin size={24} /></div>
+                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Location</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.location}</p></div>
               </div>
             </div>
           </div>
-  
-          <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none"></div>
-            <form ref={formRef} action={handleSubmit} className="space-y-6 relative z-10">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><User size={16} /> Name</label><input type="text" name="name" required placeholder="John Doe" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
-                <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><AtSign size={16} /> Email</label><input type="email" name="email" required placeholder="john@example.com" className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all" /></div>
-              </div>
-              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><MessageSquare size={16} /> Message</label><textarea name="message" required rows={4} placeholder="Let's build something amazing..." className="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition-all resize-none"></textarea></div>
-              <div className="space-y-2"><label className="text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-2"><Paperclip size={16} /> Attachments (Max 3 files)</label><input type="file" name="files" multiple accept="image/*,.pdf,.doc,.docx" className="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400 cursor-pointer" /></div>
-              <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} disabled={isPending} className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-bold text-lg shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed transition-all">{isPending ? "Sending..." : <>Send Message <Send size={20} /></>}</motion.button>
-              <AnimatePresence>{status && (<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className={`p-4 rounded-xl text-center text-sm font-medium ${status.success ? 'bg-green-500/20 text-green-600 dark:text-green-400' : 'bg-red-500/20 text-red-600 dark:text-red-400'}`}>{status.message}</motion.div>)}</AnimatePresence>
-            </form>
-          </div>
         </div>
-      </section>
-    );
-  }
+        
+        <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" />
+        {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
+          <div className="absolute inset-0 z-0">
+          </div>
+          <div className="absolute inset-0 z-10 flex items-end justify-center pb-8 pointer-events-none">
+            <motion.button
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 dark:bg-blue-600/20 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl"
+            >
+              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <span className="text-[11px] font-bold text-white uppercase tracking-tighter">Live Preview</span>
+            </motion.button>
+          </div>
+        </div> */}
+      </div>
+    </section>
+  );
+}
 
 // --- MAIN PORTFOLIO CLIENT (Chỉ hiển thị, không fetch) ---
 
@@ -312,13 +316,13 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
     const hasSeenIntro = sessionStorage.getItem('hasSeenIntro');
     if (!hasSeenIntro) setShowIntro(true);
     setSelectedYear(new Date().getFullYear());
-    
+
     // Xử lý username github từ data có sẵn
     if (data?.personalInfo?.github) {
-        const username = data.personalInfo.github.split('/').pop() || '';
-        setGithubUsername(username);
+      const username = data.personalInfo.github.split('/').pop() || '';
+      setGithubUsername(username);
     }
-    
+
     trackVisit();
   }, [data]); // Chạy 1 lần khi có data
 
@@ -386,7 +390,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           <ScrollToTop />
           <CustomCursor />
           <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70]" style={{ scaleX }} />
-          
+
           {/* Background Effects */}
           <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
@@ -410,7 +414,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
               <motion.button initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={toggleTheme} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-3 rounded-full border border-white/20 dark:border-slate-700/50 shadow-lg hover:scale-110 transition-transform text-slate-700 dark:text-yellow-400">{darkMode ? <Sun size={20} /> : <Moon size={20} />}</motion.button>
             </div>
           </div>
-          
+
           <div className="md:hidden fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50">
             <span className="font-bold text-slate-900 dark:text-white text-lg">{personalInfo.name.split(' ').pop()}</span>
             <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><Menu size={28} /></button>
@@ -432,85 +436,85 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           <main className="max-w-6xl mx-auto px-4 md:px-8 pb-24 pt-32 relative z-10">
             {/* HERO SECTION */}
             <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
-                {/* ... Nội dung Hero Section giữ nguyên ... */}
-                {/* Chỉ lưu ý: Phần Avatar dùng Image tối ưu */}
-                <div className="grid lg:grid-cols-2 gap-12 items-center">
-                    {/* LEFT COL */}
-                    <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
-                        {/* ... Các phần text giới thiệu ... */}
-                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
-                         <div className="mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex gap-2"><span>I am a</span><span className="font-bold text-slate-800 dark:text-blue-400"><Typewriter texts={roles} /></span></div>
-                         <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
-                         <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
-                         
-                         {/* Education & Achievement Grid */}
-                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                             {personalInfo.university && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p><p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p><p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p></div></div>)}
-                             {(personalInfo.gpa || personalInfo.languages) && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Achievements</p><div className="flex flex-col gap-2">{personalInfo.gpa && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><GraduationCap size={16} className="text-blue-600 dark:text-blue-400" /><span>GPA: {personalInfo.gpa}</span></div>)}{personalInfo.languages && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><Globe size={16} className="text-blue-600 dark:text-blue-400" /><span>{personalInfo.languages}</span></div>)}</div></div></div>)}
-                         </div>
+              {/* ... Nội dung Hero Section giữ nguyên ... */}
+              {/* Chỉ lưu ý: Phần Avatar dùng Image tối ưu */}
+              <div className="grid lg:grid-cols-2 gap-12 items-center">
+                {/* LEFT COL */}
+                <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
+                  {/* ... Các phần text giới thiệu ... */}
+                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
+                  <div className="mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex gap-2"><span>I am a</span><span className="font-bold text-slate-800 dark:text-blue-400"><Typewriter texts={roles} /></span></div>
+                  <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
+                  <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
 
-                         {/* Buttons */}
-                         <div className="flex flex-wrap gap-4">
-                             <motion.a href={`https://${personalInfo.github}`} target="_blank" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"><Github size={20} /> Github</motion.a>
-                             {personalInfo.cvPath && (<motion.a href={personalInfo.cvPath} download whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Monitor size={20} /> Download CV</motion.a>)}
-                             <motion.a href={`mailto:${personalInfo.email}`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Mail size={20} /> Email</motion.a>
-                         </div>
-                    </motion.div>
+                  {/* Education & Achievement Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                    {personalInfo.university && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p><p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p><p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p></div></div>)}
+                    {(personalInfo.gpa || personalInfo.languages) && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Achievements</p><div className="flex flex-col gap-2">{personalInfo.gpa && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><GraduationCap size={16} className="text-blue-600 dark:text-blue-400" /><span>GPA: {personalInfo.gpa}</span></div>)}{personalInfo.languages && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><Globe size={16} className="text-blue-600 dark:text-blue-400" /><span>{personalInfo.languages}</span></div>)}</div></div></div>)}
+                  </div>
 
-                    {/* RIGHT COL - AVATAR */}
-                    <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center relative">
-                        <div className="relative w-72 h-72 md:w-96 md:h-96">
-                             <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-30 blur-2xl animate-pulse" />
-                             <motion.div animate={{ y: [-10, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }} className="relative w-full h-full">
-                                <div className="absolute inset-0 border border-blue-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
-                                <div className="absolute inset-4 border border-dashed border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-                                <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
-                                    {personalInfo.avatar ? (
-                                        // DÙNG NEXT/IMAGE Ở ĐÂY
-                                        <Image 
-                                            src={personalInfo.avatar} 
-                                            alt="Avatar" 
-                                            fill 
-                                            priority
-                                            className="object-cover hover:scale-110 transition-transform duration-700" 
-                                        />
-                                    ) : (<div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>)}
-                                </div>
-                             </motion.div>
-                             {/* Badges */}
-                             <motion.div animate={{ y: [0, -10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2, ease: "easeInOut" }} className="absolute -right-4 top-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400"><Code2 size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Role</p><p className="text-sm font-bold text-slate-800 dark:text-white">Dev & BA</p></div></motion.div>
-                             <motion.div animate={{ y: [0, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2.5, ease: "easeInOut", delay: 0.5 }} className="absolute -left-4 bottom-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Calendar size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Exp</p><p className="text-sm font-bold text-slate-800 dark:text-white">1+ Years</p></div></motion.div>
-                        </div>
+                  {/* Buttons */}
+                  <div className="flex flex-wrap gap-4">
+                    <motion.a href={`https://${personalInfo.github}`} target="_blank" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"><Github size={20} /> Github</motion.a>
+                    {personalInfo.cvPath && (<motion.a href={personalInfo.cvPath} download whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Monitor size={20} /> Download CV</motion.a>)}
+                    <motion.a href={`mailto:${personalInfo.email}`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Mail size={20} /> Email</motion.a>
+                  </div>
+                </motion.div>
+
+                {/* RIGHT COL - AVATAR */}
+                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center relative">
+                  <div className="relative w-72 h-72 md:w-96 md:h-96">
+                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-30 blur-2xl animate-pulse" />
+                    <motion.div animate={{ y: [-10, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }} className="relative w-full h-full">
+                      <div className="absolute inset-0 border border-blue-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
+                      <div className="absolute inset-4 border border-dashed border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                      <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
+                        {personalInfo.avatar ? (
+                          // DÙNG NEXT/IMAGE Ở ĐÂY
+                          <Image
+                            src={personalInfo.avatar}
+                            alt="Avatar"
+                            fill
+                            priority
+                            className="object-cover hover:scale-110 transition-transform duration-700"
+                          />
+                        ) : (<div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>)}
+                      </div>
                     </motion.div>
-                </div>
+                    {/* Badges */}
+                    <motion.div animate={{ y: [0, -10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2, ease: "easeInOut" }} className="absolute -right-4 top-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400"><Code2 size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Role</p><p className="text-sm font-bold text-slate-800 dark:text-white">Dev & BA</p></div></motion.div>
+                    <motion.div animate={{ y: [0, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2.5, ease: "easeInOut", delay: 0.5 }} className="absolute -left-4 bottom-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Calendar size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Exp</p><p className="text-sm font-bold text-slate-800 dark:text-white">1+ Years</p></div></motion.div>
+                  </div>
+                </motion.div>
+              </div>
             </section>
 
             {/* SKILLS SECTION */}
             <section id="skills" className="mb-32 scroll-mt-28">
-               {/* ... (Giữ nguyên logic render skills của bạn) ... */}
-               <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Tech Stack<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">My arsenal of tools for building scalable applications.</p></div>
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                   <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Database size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Backend & Database</h3></div><div className="flex flex-wrap gap-2">{[...(skills.programming_Languages || []), ...(skills.backend || []), ...(skills.databases || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-                   <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"><Monitor size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Frontend & UI</h3></div><div className="flex flex-wrap gap-2">{[...(skills.frontend || []), ...(skills.mobile || []), ...(skills.design_tools || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-                   <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400"><Wrench size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Tools & Others</h3></div><div className="flex flex-wrap gap-2">{[...(skills.development_tools || []), ...(skills.testing || []), ...(skills.cms || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-               </div>
-               <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden"><div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div className="flex items-center gap-3"><div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300"><GitCommit size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3></div></div>{githubUsername ? (<div className="w-full overflow-x-auto pb-2 scrollbar-hide"><img src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`} alt={`GitHub Contributions ${selectedYear}`} className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]" /><p className="text-xs text-slate-400 mt-4 text-center">Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a></p></div>) : (<p className="text-slate-500">Github username not found.</p>)}</div>
+              {/* ... (Giữ nguyên logic render skills của bạn) ... */}
+              <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Tech Stack<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">My arsenal of tools for building scalable applications.</p></div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Database size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Backend & Database</h3></div><div className="flex flex-wrap gap-2">{[...(skills.programming_Languages || []), ...(skills.backend || []), ...(skills.databases || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"><Monitor size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Frontend & UI</h3></div><div className="flex flex-wrap gap-2">{[...(skills.frontend || []), ...(skills.mobile || []), ...(skills.design_tools || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400"><Wrench size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Tools & Others</h3></div><div className="flex flex-wrap gap-2">{[...(skills.development_tools || []), ...(skills.testing || []), ...(skills.cms || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+              </div>
+              <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden"><div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div className="flex items-center gap-3"><div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300"><GitCommit size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3></div></div>{githubUsername ? (<div className="w-full overflow-x-auto pb-2 scrollbar-hide"><img src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`} alt={`GitHub Contributions ${selectedYear}`} className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]" /><p className="text-xs text-slate-400 mt-4 text-center">Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a></p></div>) : (<p className="text-slate-500">Github username not found.</p>)}</div>
             </section>
 
             {/* EXPERIENCE SECTION */}
             <section id="experience" className="mb-32 scroll-mt-28">
-                <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div></div>
-                <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
+              <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div></div>
+              <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
             </section>
 
             {/* PROJECTS SECTION */}
             <section id="projects" className="mb-32 scroll-mt-28">
-               <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Featured Projects<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">Selected works demonstrating my capabilities.</p></div>
-               <div className="space-y-24 md:space-y-32">
-                 {projects.map((project: any, index: number) => (
-                   <ProjectCard key={project.id} project={project} index={index} />
-                 ))}
-               </div>
+              <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Featured Projects<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">Selected works demonstrating my capabilities.</p></div>
+              <div className="space-y-24 md:space-y-32">
+                {projects.map((project: any, index: number) => (
+                  <ProjectCard key={project.id} project={project} index={index} />
+                ))}
+              </div>
             </section>
 
             {/* CONTACT SECTION */}
