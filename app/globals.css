@@ -79,12 +79,17 @@ html {
 
 /* Ẩn côn trỏ chuột  */
 
-/* @media (pointer: fine) {
-  body {
-    cursor: none; 
-  }
-  
-  a, button, input, textarea, select {
+@media (pointer: fine) {
+  /* Chỉ ẩn khi body có class 'custom-cursor-active' */
+  body.custom-cursor-active {
     cursor: none;
   }
-} */
+  
+  body.custom-cursor-active a, 
+  body.custom-cursor-active button, 
+  body.custom-cursor-active input, 
+  body.custom-cursor-active textarea, 
+  body.custom-cursor-active select {
+    cursor: none;
+  }
+}

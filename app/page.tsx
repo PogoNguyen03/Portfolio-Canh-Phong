@@ -192,10 +192,14 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-50px" }}
       transition={{ duration: 0.6, delay: 0.1 }}
-      // UPDATE: flex-col-reverse cho Mobile để Ảnh lên đầu
+      // Mobile: flex-col-reverse (Ảnh trên, Chữ dưới)
+      // Desktop: flex-row hoặc flex-row-reverse (Sole nhau)
       className={`group relative flex flex-col-reverse gap-6 md:gap-8 md:items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}
     >
+      {/* --- PHẦN NỘI DUNG CHỮ --- */}
       <div className="flex-1 relative z-10">
+
+        {/* Badges */}
         <div className={`flex items-center gap-3 mb-3 md:mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
           <span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">Featured Project</span>
           <span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${isPrivate ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'}`}>
@@ -204,33 +208,47 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
           </span>
         </div>
 
+        {/* Title */}
         <h3 className={`text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 md:mb-6 ${isEven ? 'text-left' : 'md:text-right text-left'}`}>
           <Link href={`/project/${project.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.name}</Link>
         </h3>
 
-        {/* UPDATE: Mobile (bỏ background, bỏ shadow, bỏ padding) / Desktop (giữ nguyên box style) */}
+        {/* Overview Box */}
         <div className={`relative transition-transform hover:-translate-y-1 duration-300
-            md:p-8 md:bg-white md:dark:bg-slate-900/90 md:rounded-2xl md:shadow-xl md:border md:border-slate-100 md:dark:border-slate-800 md:backdrop-blur-sm
-            ${isEven ? 'md:mr-0 md:-mr-16' : 'md:ml-0 md:-ml-16'}
-         `}>
+           md:p-8 md:bg-white md:dark:bg-slate-900/90 md:rounded-2xl md:shadow-xl md:border md:border-slate-100 md:dark:border-slate-800 md:backdrop-blur-sm
+           ${isEven ? 'md:mr-0 md:-mr-16' : 'md:ml-0 md:-ml-16'}
+        `}>
           <p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">
             {project.overview}
           </p>
         </div>
 
+        {/* Tech Stack */}
         <div className={`flex flex-wrap gap-2 mt-4 md:mt-6 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
           {stackList.map((tech: string, i: number) => (<span key={i} className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full font-mono">{tech}</span>))}
         </div>
 
+        {/* Links & Buttons */}
         <div className={`mt-6 md:mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
           <Link href={`/project/${project.id}`} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>
           {!isPrivate && project.github && (<a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub"><Github size={20} /></a>)}
           {!isPrivate && project.demo && (<a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo"><ExternalLink size={20} /></a>)}
-          <div className={`absolute -bottom-10 -z-10 text-[120px] md:text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>{projectIndex}</div>
+
+          {/* UPDATE: Ẩn số khổng lồ trên Mobile (hidden), Chỉ hiện trên Desktop (md:block) */}
+          <div className={`hidden md:block absolute -bottom-10 -z-10 text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>
+            {projectIndex}
+          </div>
         </div>
       </div>
 
+      {/* --- PHẦN HÌNH ẢNH --- */}
       <div className="flex-[1.2] relative group/img w-full">
+
+        {/* UPDATE: Số thứ tự cho Mobile (Nổi lên trên ảnh, góc phải) */}
+        <div className="md:hidden absolute top-3 right-3 z-20 text-5xl font-black text-white/50 drop-shadow-md select-none pointer-events-none mix-blend-overlay">
+          {projectIndex}
+        </div>
+
         <TiltCard>
           <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
             {coverImage ? (
@@ -324,6 +342,7 @@ function CustomCursor() {
   const [coords, setCoords] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
+    document.body.classList.add('custom-cursor-active');
     const moveCursor = (e: MouseEvent) => {
       cursorX.set(e.clientX);
       cursorY.set(e.clientY);
@@ -351,6 +370,8 @@ function CustomCursor() {
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
+      document.body.classList.remove('custom-cursor-active');
+
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', checkHover);
       document.removeEventListener('mouseenter', handleMouseEnter);
@@ -654,7 +675,6 @@ export default function Portfolio() {
             </section>
 
             {/* SKILLS SECTION */}
-            {/* SKILLS SECTION (3 NHÓM CHÍNH) */}
             <section id="skills" className="mb-32 scroll-mt-28">
               <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">
@@ -707,7 +727,7 @@ export default function Portfolio() {
                       <SkillBadge key={`${s}-${i}`} item={s} />
                     ))}
                   </div>
-                </div>                
+                </div>
 
                 {/* 3. TOOLS (Gộp: Dev Tools, Testing, CMS) */}
                 <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors">
@@ -766,9 +786,14 @@ export default function Portfolio() {
 
             {/* PROJECTS SECTION */}
             <section id="projects" className="mb-32 scroll-mt-28">
-              <div className="text-center mb-24">
-                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Featured Projects</h2>
-                <p className="text-slate-500 dark:text-slate-400">Selected works demonstrating my capabilities.</p>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">
+                  Featured Projects
+                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span>
+                </h2>
+                <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">
+                  Selected works demonstrating my capabilities.
+                </p>
               </div>
               <div className="space-y-24 md:space-y-32">
                 {projects.map((project: any, index: number) => (
