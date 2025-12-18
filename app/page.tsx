@@ -185,6 +185,11 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
   const isEven = index % 2 === 0;
   const isPrivate = project.visibility === 'Private';
+  // Trong component ProjectCard hoặc nơi gọi hàm chuyển trang
+  const handleViewDetail = () => {
+    // 1. Lưu vị trí cuộn hiện tại vào sessionStorage
+    sessionStorage.setItem("projectScrollPos", window.scrollY.toString());
+  };
 
   return (
     <motion.div
@@ -210,7 +215,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
 
         {/* Title */}
         <h3 className={`text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 md:mb-6 ${isEven ? 'text-left' : 'md:text-right text-left'}`}>
-          <Link href={`/project/${project.id}`} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.name}</Link>
+          <Link href={`/project/${project.id}`} onClick={handleViewDetail} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.name}</Link>
         </h3>
 
         {/* Overview Box */}
@@ -230,7 +235,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
 
         {/* Links & Buttons */}
         <div className={`mt-6 md:mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
-          <Link href={`/project/${project.id}`} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>
+          <Link href={`/project/${project.id}`} onClick={handleViewDetail} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>
           {!isPrivate && project.github && (<a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub"><Github size={20} /></a>)}
           {!isPrivate && project.demo && (<a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo"><ExternalLink size={20} /></a>)}
 
@@ -250,7 +255,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
         </div>
 
         <TiltCard>
-          <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
+          <Link href={`/project/${project.id}`} onClick={handleViewDetail} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
             {coverImage ? (
               <div className="relative w-full h-full">
                 <img src={coverImage} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" />
@@ -518,6 +523,22 @@ export default function Portfolio() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (!loading && data) {
+      const savedPos = sessionStorage.getItem("projectScrollPos");
+
+      if (savedPos) {
+        setTimeout(() => {
+          window.scrollTo({
+            top: parseInt(savedPos),
+            behavior: "instant" 
+          });
+          sessionStorage.removeItem("projectScrollPos");
+        }, 100);
+      }
+    }
+  }, [loading, data]);
+
   if (loading || !data || selectedYear === null) {
     return (
       <div className="h-screen w-full flex items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -525,6 +546,8 @@ export default function Portfolio() {
       </div>
     );
   }
+
+  
 
   const { personalInfo, skills, experiences, projects } = data;
   const roles = personalInfo.title.split('|').map((r: string) => r.trim());
@@ -620,19 +643,67 @@ export default function Portfolio() {
                     {(personalInfo.gpa || personalInfo.languages) && (
                       <div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50">
                         <div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div>
-                        <div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Achievements</p>{personalInfo.gpa && <p className="text-sm font-bold text-slate-800 dark:text-slate-200">GPA: {personalInfo.gpa}</p>}{personalInfo.languages && (<div className="flex items-center gap-1.5 mt-1 text-xs text-slate-500 dark:text-slate-400"><Globe size={12} /> {personalInfo.languages}</div>)}</div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Achievements</p>
+
+                          <div className="flex flex-col gap-2">
+                            {personalInfo.gpa && (
+                              <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                                <GraduationCap size={16} className="text-blue-600 dark:text-blue-400" />
+                                <span>GPA: {personalInfo.gpa}</span>
+                              </div>
+                            )}
+
+                            {personalInfo.languages && (
+                              <div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200">
+                                <Globe size={16} className="text-blue-600 dark:text-blue-400" />
+                                <span>{personalInfo.languages}</span>
+                              </div>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     )}
                   </div>
 
                   <div className="flex flex-wrap gap-4">
-                    <motion.a href={`https://${personalInfo.github}`} target="_blank" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-8 py-4 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"><Github size={20} /> Github</motion.a>
-                    {personalInfo.cvPath && (<motion.a href={personalInfo.cvPath} download whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-8 py-4 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Monitor size={20} /> Download CV</motion.a>)}
+                    {/* Nút Github */}
+                    <motion.a
+                      href={`https://${personalInfo.github}`}
+                      target="_blank"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"
+                    >
+                      <Github size={20} /> Github
+                    </motion.a>
+
+                    {personalInfo.cvPath && (
+                      <motion.a
+                        href={personalInfo.cvPath}
+                        download
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                      >
+                        <Monitor size={20} /> Download CV
+                      </motion.a>
+                    )}
+                    <motion.a
+                      href={`mailto:${personalInfo.email}`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"
+                    >
+                      <Mail size={20} /> Email
+                    </motion.a>
                   </div>
-                  <div className="mt-10 flex items-center gap-6 text-slate-500 dark:text-slate-500 text-sm font-medium">
-                    <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer group" onClick={() => handleCopyEmail(personalInfo.email)}><Mail size={16} /><span className="relative">{personalInfo.email}<span className="absolute -right-6 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">{copied ? <Check size={14} className="text-green-500" /> : <Copy size={14} />}</span></span>{copied && <span className="text-xs text-green-500 ml-2 animate-bounce">Copied!</span>}</div>
-                    <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer"><MapPin size={16} /> {personalInfo.location}</div>
-                  </div>
+
+                  {/* <div className="mt-10 flex items-center gap-6 text-slate-500 dark:text-slate-500 text-sm font-medium">
+                    <div className="flex items-center gap-2 hover:text-blue-600 dark:hover:text-blue-400 transition-colors cursor-pointer">
+                      <MapPin size={16} /> {personalInfo.location}
+                    </div>
+                  </div> */}
                 </motion.div>
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center relative">
                   <div className="relative w-72 h-72 md:w-96 md:h-96">
@@ -780,7 +851,7 @@ export default function Portfolio() {
 
             {/* EXPERIENCE SECTION */}
             <section id="experience" className="mb-32 scroll-mt-28">
-              <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div><div className="hidden md:block w-32 h-1 bg-slate-200 dark:bg-slate-800 rounded-full"></div></div>
+              <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div></div>
               <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
             </section>
 
