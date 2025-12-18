@@ -109,7 +109,11 @@
       "demo": "https://wedding-demo.vercel.app",
       "video": "",
       "visibility": "Private",
-      "images": [],
+      "images": [
+        "/uploads/cv-1766048757290.jfif",
+        "/uploads/cv-1766048759954.jfif",
+        "/uploads/cv-1766048762697.jfif"
+      ],
       "id": 1
     },
     {
@@ -122,7 +126,11 @@
       "demo": "",
       "video": "",
       "visibility": "Private",
-      "images": [],
+      "images": [
+        "/uploads/cv-1766048770175.jfif",
+        "/uploads/cv-1766048772584.jfif",
+        "/uploads/cv-1766048775320.jfif"
+      ],
       "id": 2
     }
   ]
