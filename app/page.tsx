@@ -7,9 +7,9 @@ import {
   Layers, Terminal, Sun, Moon, Monitor,
   GitCommit, ArrowUp, Check, Copy, X,
   Send, User, AtSign, MessageSquare, Paperclip,
-  GraduationCap, Award, Globe, Lock, Phone, Menu
+  GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar
 } from 'lucide-react';
-import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
+import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
 import { trackVisit } from '@/lib/analyticsActions';
 
@@ -225,21 +225,23 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
           <Link href={`/project/${project.id}`} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>
           {!isPrivate && project.github && (<a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub"><Github size={20} /></a>)}
           {!isPrivate && project.demo && (<a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo"><ExternalLink size={20} /></a>)}
+          <div className={`absolute -bottom-10 -z-10 text-[120px] md:text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>{projectIndex}</div>
         </div>
       </div>
 
       <div className="flex-[1.2] relative group/img w-full">
-        <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
-          {coverImage ? (
-            <div className="relative w-full h-full">
-              <img src={coverImage} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" />
-              <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
-                {isPrivate && (<div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity"><Lock size={16} /> Private Access</div>)}
+        <TiltCard>
+          <Link href={`/project/${project.id}`} className="block relative rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 aspect-video bg-slate-100 dark:bg-slate-900">
+            {coverImage ? (
+              <div className="relative w-full h-full">
+                <img src={coverImage} alt={project.name} className="w-full h-full object-cover transition-transform duration-700 group-hover/img:scale-105" />
+                <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
+                  {isPrivate && (<div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity"><Lock size={16} /> Private Access</div>)}
+                </div>
               </div>
-            </div>
-          ) : (<div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700"><Layers size={64} className="mb-4" /><span className="text-sm font-mono">No Cover Image</span></div>)}
-        </Link>
-        <div className={`absolute -bottom-10 -z-10 text-[120px] md:text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>{projectIndex}</div>
+            ) : (<div className="w-full h-full flex flex-col items-center justify-center text-slate-300 dark:text-slate-700"><Layers size={64} className="mb-4" /><span className="text-sm font-mono">No Cover Image</span></div>)}
+          </Link>
+        </TiltCard>
       </div>
     </motion.div>
   );
@@ -262,6 +264,44 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
             <ul className="space-y-3">{exp.description.map((desc: string, i: number) => (<li key={i} className="text-slate-600 dark:text-slate-400 text-sm leading-relaxed flex items-start gap-3"><span className="mt-1.5 w-1.5 h-1.5 bg-blue-400 rounded-full flex-shrink-0" />{desc}</li>))}</ul>
           </div>
         </div>
+      </div>
+    </motion.div>
+  );
+}
+
+// 8. TiltCard project
+function TiltCard({ children }: { children: React.ReactNode }) {
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseX = useSpring(x, { stiffness: 150, damping: 10 });
+  const mouseY = useSpring(y, { stiffness: 150, damping: 10 });
+
+  function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
+    const { left, top, width, height } = currentTarget.getBoundingClientRect();
+    const xPct = (clientX - left) / width - 0.5;
+    const yPct = (clientY - top) / height - 0.5;
+    x.set(xPct);
+    y.set(yPct);
+  }
+
+  function handleMouseLeave() {
+    x.set(0);
+    y.set(0);
+  }
+
+  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]);
+  const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
+
+  return (
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
+      className="relative w-full h-full perspective-1000"
+    >
+      <div style={{ transform: "translateZ(20px)" }} className="h-full">
+        {children}
       </div>
     </motion.div>
   );
@@ -476,19 +516,39 @@ export default function Portfolio() {
                 </motion.div>
                 <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center relative">
                   <div className="relative w-72 h-72 md:w-96 md:h-96">
+
+                    {/* HIỆU ỨNG GLOW (MỚI THÊM) - Tạo hào quang màu xanh/tím sau lưng */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-30 blur-2xl animate-pulse" />
+
+                    {/* VÒNG TRÒN XOAY (Giữ nguyên) */}
                     <motion.div
                       animate={{ y: [-10, 10, -10] }}
                       transition={{ repeat: Infinity, duration: 6, ease: "easeInOut" }}
-                      className="relative w-72 h-72 md:w-96 md:h-96"
+                      className="relative w-full h-full"
                     >
                       <div className="absolute inset-0 border border-blue-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
                       <div className="absolute inset-4 border border-dashed border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
-                      <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">{personalInfo.avatar ? (<img src={personalInfo.avatar} alt="Avatar" className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />) : (<div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>)}</div>
+                      <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
+                        {personalInfo.avatar ? (
+                          <img src={personalInfo.avatar} alt="Avatar" className="w-full h-full object-cover hover:scale-110 transition-transform duration-700" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>
+                        )}
+                      </div>
                     </motion.div>
+
+                    {/* BADGE ROLE (Cập nhật Dev & BA) */}
                     <motion.div animate={{ y: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }} className="absolute -right-4 top-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20">
                       <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400"><Code2 size={20} /></div>
-                      <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Role</p><p className="text-sm font-bold text-slate-800 dark:text-white">Developer</p></div>
+                      <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Role</p><p className="text-sm font-bold text-slate-800 dark:text-white">Dev & BA</p></div>
                     </motion.div>
+
+                    {/* BADGE EXPERIENCE (Mới thêm) */}
+                    <motion.div animate={{ y: [0, 10, 0] }} transition={{ repeat: Infinity, duration: 5, ease: "easeInOut", delay: 1 }} className="absolute -left-4 bottom-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20">
+                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Calendar size={20} /></div>
+                      <div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Exp</p><p className="text-sm font-bold text-slate-800 dark:text-white">1+ Years</p></div>
+                    </motion.div>
+
                   </div>
                 </motion.div>
               </div>
