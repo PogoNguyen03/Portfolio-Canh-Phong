@@ -16,7 +16,7 @@
     "cvPath": "/uploads/cv-1765868365093.pdf"
   },
   "skills": {
-    "languages": [
+    "programming_Languages": [
       "Java",
       "C#",
       "PHP",
@@ -25,33 +25,42 @@
       "Dart"
     ],
     "frontend": [
-      "ReactJS",
+      "React",
       "Next.js",
-      "Tailwind",
+      "Tailwind CSS",
       "Bootstrap",
-      "HTML5/CSS3"
+      "HTML5",
+      "CSS3"
     ],
     "backend": [
       "Node.js",
-      ".NET",
-      "SQL Server",
+      ".NET Core"
+    ],
+    "databases": [
+      "Microsoft SQL Server",
       "MySQL",
       "Oracle",
       "MongoDB",
       "Firebase"
     ],
-    "mobileTools": [
-      "Android",
-      "Flutter",
-      "Git",
-      "Postman",
-      "Selenium",
+    "mobile": [
+      "Flutter"
+    ],
+    "cms": [
       "WordPress"
     ],
-    "designBA": [
-      "StarUML",
-      "Balsamiq",
+    "development_tools": [
+      "Git",
+      "GitLab",
+      "Postman"
+    ],
+    "testing": [
+      "Selenium"
+    ],
+    "design_tools": [
       "Figma",
+      "Balsamiq",
+      "StarUML",
       "Photoshop",
       "Illustrator"
     ]

@@ -7,7 +7,8 @@ import {
   Layers, Terminal, Sun, Moon, Monitor,
   GitCommit, ArrowUp, Check, Copy, X,
   Send, User, AtSign, MessageSquare, Paperclip,
-  GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar
+  GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar,
+  Database, Palette, Smartphone, Wrench
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
@@ -307,6 +308,103 @@ function TiltCard({ children }: { children: React.ReactNode }) {
   );
 }
 
+// 9. Con trỏ chuột custom
+function CustomCursor() {
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
+
+  // Hiệu ứng lò xo cho khung đi sau
+  const springConfig = { damping: 20, stiffness: 300 };
+  const cursorXSpring = useSpring(cursorX, springConfig);
+  const cursorYSpring = useSpring(cursorY, springConfig);
+
+  const [isHovering, setIsHovering] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  // State để hiển thị tọa độ số
+  const [coords, setCoords] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const moveCursor = (e: MouseEvent) => {
+      cursorX.set(e.clientX);
+      cursorY.set(e.clientY);
+      setCoords({ x: e.clientX, y: e.clientY }); // Cập nhật số tọa độ
+    };
+
+    const checkHover = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const isClickable =
+        target.tagName === 'A' ||
+        target.tagName === 'BUTTON' ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'TEXTAREA' ||
+        target.closest('a') ||
+        target.closest('button');
+      setIsHovering(!!isClickable);
+    };
+
+    const handleMouseEnter = () => setIsVisible(true);
+    const handleMouseLeave = () => setIsVisible(false);
+
+    window.addEventListener('mousemove', moveCursor);
+    window.addEventListener('mouseover', checkHover);
+    document.addEventListener('mouseenter', handleMouseEnter);
+    document.addEventListener('mouseleave', handleMouseLeave);
+
+    return () => {
+      window.removeEventListener('mousemove', moveCursor);
+      window.removeEventListener('mouseover', checkHover);
+      document.removeEventListener('mouseenter', handleMouseEnter);
+      document.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, [cursorX, cursorY]);
+
+  return (
+    <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block overflow-hidden">
+
+      {/* 1. KHUNG VUÔNG NGOÀI (Target Frame) - Đi theo sau */}
+      <motion.div
+        className="fixed top-0 left-0 border border-blue-400 mix-blend-difference"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={{
+          width: isHovering ? 48 : 30, // Hover thì to ra
+          height: isHovering ? 48 : 30,
+          opacity: isVisible ? 1 : 0,
+          rotate: isHovering ? 45 : 0, // Hover thì xoay 45 độ thành hình thoi
+          scale: isHovering ? 1.2 : 1,
+        }}
+        transition={{ type: "spring", stiffness: 400, damping: 28 }}
+      >
+        {/* Các góc trang trí (Corner Brackets) để trông giống HUD */}
+        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
+      </motion.div>
+
+      {/* 2. DẤU CỘNG TRUNG TÂM (Crosshair) - Đi theo chuột tức thì */}
+      <motion.div
+        className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference"
+        style={{
+          x: cursorX,
+          y: cursorY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={{ opacity: isVisible ? 1 : 0 }}
+      >
+        <div className="w-1 h-4 bg-blue-500 absolute" /> {/* Gạch dọc */}
+        <div className="w-4 h-1 bg-blue-500 absolute" /> {/* Gạch ngang */}
+      </motion.div>
+
+    </div>
+  );
+}
+
 // --- MAIN PAGE ---
 
 export default function Portfolio() {
@@ -417,6 +515,7 @@ export default function Portfolio() {
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
           <ScrollToTop />
+          <CustomCursor />
           <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70]" style={{ scaleX }} />
           <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
@@ -555,21 +654,107 @@ export default function Portfolio() {
             </section>
 
             {/* SKILLS SECTION */}
+            {/* SKILLS SECTION (3 NHÓM CHÍNH) */}
             <section id="skills" className="mb-32 scroll-mt-28">
-              <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">Tech Stack</h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">My arsenal of tools for building scalable applications.</p></div>
-              <div className="grid md:grid-cols-2 gap-6 mb-12">
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-                  <div className="flex items-center gap-3 mb-6"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Terminal size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Backend & Core</h3></div>
-                  <div className="flex flex-wrap gap-2">{skills.languages.map((s: string) => <SkillBadge key={s} item={s} />)}{skills.backend.map((s: string) => <SkillBadge key={s} item={s} />)}</div>
-                </div>
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
-                  <div className="flex items-center gap-3 mb-6"><div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"><Monitor size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Frontend & UI</h3></div>
-                  <div className="flex flex-wrap gap-2">{skills.frontend.map((s: string) => <SkillBadge key={s} item={s} />)}{skills.mobileTools.map((s: string) => <SkillBadge key={s} item={s} />)}{skills.designBA.map((s: string) => <SkillBadge key={s} item={s} />)}</div>
-                </div>
+              <div className="text-center mb-16">
+                <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">
+                  Tech Stack
+                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span>
+                </h2>
+                <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">
+                  My arsenal of tools for building scalable applications.
+                </p>
               </div>
+
+              {/* GRID 3 CỘT CHO 3 NHÓM LỚN */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+
+                {/* 2. BACKEND & DATABASE (Gộp: Languages, Backend, Databases) */}
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400">
+                      <Database size={24} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Backend & Database</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {/* Kết hợp mảng Programming Languages, Backend và Databases */}
+                    {[
+                      ...(skills.programming_Languages || []),
+                      ...(skills.backend || []),
+                      ...(skills.databases || [])
+                    ].map((s: string, i: number) => (
+                      <SkillBadge key={`${s}-${i}`} item={s} />
+                    ))}
+                  </div>
+                </div>
+
+                {/* 1. FRONTEND & UI (Gộp: Frontend, Mobile, Design) */}
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400">
+                      <Monitor size={24} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Frontend & UI</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {/* Kết hợp mảng Frontend, Mobile và Design Tools */}
+                    {[
+                      ...(skills.frontend || []),
+                      ...(skills.mobile || []),
+                      ...(skills.design_tools || [])
+                    ].map((s: string, i: number) => (
+                      <SkillBadge key={`${s}-${i}`} item={s} />
+                    ))}
+                  </div>
+                </div>                
+
+                {/* 3. TOOLS (Gộp: Dev Tools, Testing, CMS) */}
+                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400">
+                      <Wrench size={24} />
+                    </div>
+                    <h3 className="text-lg font-bold text-slate-800 dark:text-white">Tools & Others</h3>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {/* Kết hợp mảng Dev Tools, Testing và CMS */}
+                    {[
+                      ...(skills.development_tools || []),
+                      ...(skills.testing || []),
+                      ...(skills.cms || [])
+                    ].map((s: string, i: number) => (
+                      <SkillBadge key={`${s}-${i}`} item={s} />
+                    ))}
+                  </div>
+                </div>
+
+              </div>
+
+              {/* Github Chart (Giữ nguyên) */}
               <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div className="flex items-center gap-3"><div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300"><GitCommit size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3></div></div>
-                {githubUsername ? (<div className="w-full overflow-x-auto pb-2 scrollbar-hide"><img src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`} alt={`GitHub Contributions ${selectedYear}`} className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]" /><p className="text-xs text-slate-400 mt-4 text-center">Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a></p></div>) : (<p className="text-slate-500">Github username not found.</p>)}
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300">
+                      <GitCommit size={24} />
+                    </div>
+                    <h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3>
+                  </div>
+                </div>
+                {githubUsername ? (
+                  <div className="w-full overflow-x-auto pb-2 scrollbar-hide">
+                    <img
+                      src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`}
+                      alt={`GitHub Contributions ${selectedYear}`}
+                      className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]"
+                    />
+                    <p className="text-xs text-slate-400 mt-4 text-center">
+                      Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a>
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-slate-500">Github username not found.</p>
+                )}
               </div>
             </section>
 
