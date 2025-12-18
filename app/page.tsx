@@ -1,34 +1,33 @@
 // app/page.tsx
+import React from 'react';
+import PortfolioClient from './PortfolioClient';
 
-// Hàm helper để lấy URL chính xác
-const getBaseUrl = () => {
-  // 1. Nếu đang chạy trên Vercel (Production/Preview)
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  
-  // 2. Nếu bạn đã set biến môi trường custom (ví dụ tên miền riêng)
-  if (process.env.NEXT_PUBLIC_APP_URL) {
-    return process.env.NEXT_PUBLIC_APP_URL;
-  }
-
-  // 3. Mặc định localhost khi chạy dưới máy
-  return 'http://localhost:3000';
-};
+// --- QUAN TRỌNG: Import dữ liệu trực tiếp thay vì fetch ---
+// Giả sử dữ liệu của bạn nằm trong file json này (hãy sửa đường dẫn cho đúng file của bạn)
+import portfolioData from '@/data/portfolio.json'; 
+// Hoặc nếu bạn dùng fs để đọc file:
+// import { promises as fs } from 'fs';
+// import path from 'path';
 
 async function getData() {
-  try {
-    const baseUrl = getBaseUrl();
-    console.log("Fetching data from:", baseUrl); // Log để debug trên Vercel
+  // CÁCH 1: Nếu data là file JSON import được -> Dùng luôn, siêu nhanh
+  return portfolioData;
 
-    const res = await fetch(`${baseUrl}/api/data`, { cache: 'no-store' });
+  // CÁCH 2: Nếu bạn dùng logic phức tạp (đọc file, DB), hãy viết code đó ở đây
+  /*
+  const filePath = path.join(process.cwd(), 'data', 'portfolio.json');
+  const fileContents = await fs.readFile(filePath, 'utf8');
+  return JSON.parse(fileContents);
+  */
+}
 
-    if (!res.ok) {
-      throw new Error(`Failed to fetch data status: ${res.status}`);
-    }
-    return res.json();
-  } catch (error) {
-    console.error("Server Fetch Error:", error);
-    return null;
+export default async function Page() {
+  // Gọi hàm lấy dữ liệu trực tiếp (không qua mạng Internet)
+  const data = await getData();
+
+  if (!data) {
+    return <div className="p-10 text-center">Failed to load data</div>;
   }
+
+  return <PortfolioClient initialData={data} />;
 }
