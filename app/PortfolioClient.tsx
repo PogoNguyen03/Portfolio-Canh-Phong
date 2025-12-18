@@ -180,6 +180,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   const stackList = project.stack.split(',').map((s: string) => s.trim());
   const projectIndex = String(index + 1).padStart(2, '0');
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
+  console.log("Project Image Path:", coverImage);
   const isEven = index % 2 === 0;
   const isPrivate = project.visibility === 'Private';
   const handleViewDetail = () => { sessionStorage.setItem("projectScrollPos", window.scrollY.toString()); };
