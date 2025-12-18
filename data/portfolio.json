@@ -109,11 +109,7 @@
       "demo": "https://wedding-demo.vercel.app",
       "video": "",
       "visibility": "Private",
-      "images": [
-        "/uploads/cv-1765963693231.jfif",
-        "/uploads/cv-1765963695234.jfif",
-        "/uploads/cv-1765963697398.jfif"
-      ],
+      "images": [],
       "id": 1
     },
     {
@@ -126,26 +122,8 @@
       "demo": "",
       "video": "",
       "visibility": "Private",
-      "images": [
-        "/uploads/cv-1765964472935.jfif",
-        "/uploads/cv-1765964479366.jfif"
-      ],
+      "images": [],
       "id": 2
-    },
-    {
-      "name": "aaaaaaaaaa",
-      "role": "aaaaaaaaa",
-      "stack": "aaaaaaaa",
-      "overview": "aaaaaaaaaaaaaaaaaaaaaaaaaaaa",
-      "solution": "aaaaaaaaaaaa",
-      "github": "",
-      "demo": "",
-      "video": "",
-      "visibility": "Public",
-      "images": [
-        "/uploads/cv-1766041088968.jfif"
-      ],
-      "id": 3
     }
   ]
 }
