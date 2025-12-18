@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { ArrowLeft, Inbox, Calendar, User, Mail as MailIcon, RefreshCcw, Paperclip, Download } from 'lucide-react';
 import { getContactMessages } from '@/lib/adminActions';
 
+export const dynamic = 'force-dynamic';
+
 export default function MessagesPage() {
     const [messages, setMessages] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);

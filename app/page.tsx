@@ -3,6 +3,8 @@ import React from 'react';
 import PortfolioClient from './PortfolioClient';
 import { readData } from '@/lib/adminActions';
 
+export const dynamic = 'force-dynamic';
+
 export default async function Page() {
   // LẤY DỮ LIỆU TỪ BLOB (hoặc fallback JSON) QUA adminActions
   const data = await readData();

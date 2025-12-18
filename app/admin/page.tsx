@@ -10,6 +10,8 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 // Mock data thống kê (để làm đẹp)
 const stats = [
   { label: "Total Views", value: "1.2k", color: "text-blue-500" },

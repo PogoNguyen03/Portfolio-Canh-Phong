@@ -9,24 +9,27 @@ const MSG_FILE_NAME = 'database/messages.json';
 
 // --- HÀM HELPER: ĐỌC DỮ LIỆU ---
 export async function readData() {
+  // Import dữ liệu mặc định để dùng làm fallback
+  const defaultDataImport = await import('@/data/portfolio.json');
+  const defaultData = defaultDataImport.default || defaultDataImport;
+
   try {
-    // 1. Tìm file trên Blob trước
+    // 1. Tìm file trên Blob
     const { blobs } = await list({ prefix: DB_FILE_NAME, limit: 1 });
     
-    // 2. Nếu có trên Blob -> Tải về
+    // 2. Nếu có file trên Blob -> Tải về
     if (blobs.length > 0) {
       const response = await fetch(blobs[0].url, { cache: 'no-store' });
       return await response.json();
     }
 
-    // 3. Nếu chưa có trên Blob (lần đầu) -> Đọc file mẫu từ code để hiển thị
-    // (Chỉ import để đọc, KHÔNG được dùng fs để ghi lại)
-    const defaultData = await import('@/data/portfolio.json');
-    return defaultData.default || defaultData;
+    // 3. Nếu chưa có trên Blob -> Trả về mặc định
+    return defaultData;
 
   } catch (error) {
     console.error("Error reading data:", error);
-    return null;
+    // QUAN TRỌNG: Trả về dữ liệu mặc định thay vì null để không bị sập web
+    return defaultData; 
   }
 }
 
