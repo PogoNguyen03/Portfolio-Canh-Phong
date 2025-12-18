@@ -1,6 +1,6 @@
 // app/admin/edit/[section]/page.tsx
 import React from 'react';
-import { readData, updateSectionData, deleteListItem } from '@/lib/adminActions';
+import { readData, updatePortfolio as updateSectionData, deleteListItem } from '@/lib/adminActions';
 import { EditForm } from './EditForm'; // Import Client Component (sẽ tạo dưới đây)
 import Link from 'next/link';
 import { ArrowLeft, Trash2, Edit } from 'lucide-react';

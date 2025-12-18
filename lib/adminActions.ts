@@ -118,3 +118,24 @@ export async function submitContactForm(formData: FormData) {
     return { success: false, message: error.message };
   }
 }
+
+export async function deleteListItem(section: string, indexToRemove: number) {
+  try {
+    const currentData = await readData();
+    if (!currentData) throw new Error("Could not load data");
+
+    // Kiểm tra xem section đó có phải là mảng không (để xóa)
+    if (Array.isArray(currentData[section])) {
+      // Xóa phần tử tại vị trí indexToRemove
+      currentData[section] = currentData[section].filter((_: any, idx: number) => idx !== indexToRemove);
+      
+      await writeData(currentData);
+      return { success: true, message: "Item deleted successfully" };
+    } 
+    
+    return { success: false, message: "Section is not a list" };
+  } catch (error: any) {
+    console.error("Delete error:", error);
+    return { success: false, message: error.message };
+  }
+}
