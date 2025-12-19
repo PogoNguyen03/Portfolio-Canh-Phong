@@ -22,51 +22,82 @@ import Spline from '@splinetool/react-spline';
 function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-  const springConfig = { damping: 30, stiffness: 300 };
+
+  // Tăng damping để mượt hơn, giảm stiffness để bớt nặng CPU
+  const springConfig = { damping: 40, stiffness: 400, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
+
   const [isHovering, setIsHovering] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    document.body.classList.add('custom-cursor-active');
+    // Chỉ kích hoạt trên thiết bị có chuột
+    if (window.matchMedia("(pointer: fine)").matches) {
+      document.body.classList.add('custom-cursor-active');
+    }
+
     const moveCursor = (e: MouseEvent) => {
-      cursorX.set(e.clientX);
-      cursorY.set(e.clientY);
-      if (!isVisible) setIsVisible(true);
+      // Dùng requestAnimationFrame để đồng bộ với tần số quét màn hình
+      window.requestAnimationFrame(() => {
+        cursorX.set(e.clientX);
+        cursorY.set(e.clientY);
+      });
     };
-    const checkHover = (e: MouseEvent) => {
+
+    // Sử dụng event delegation để kiểm tra hover (Hiệu năng tốt hơn)
+    const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isClickable = target.tagName === 'A' || target.tagName === 'BUTTON' || target.tagName === 'INPUT' || target.closest('a') || target.closest('button');
-      setIsHovering(!!isClickable);
+      const isClickable = !!target.closest('a, button, input, [role="button"]');
+      setIsHovering(isClickable);
     };
-    const handleMouseLeave = () => setIsVisible(false);
-    const handleMouseEnter = () => setIsVisible(true);
 
     window.addEventListener('mousemove', moveCursor, { passive: true });
-    window.addEventListener('mouseover', checkHover, { passive: true });
-    document.body.addEventListener('mouseleave', handleMouseLeave);
-    document.body.addEventListener('mouseenter', handleMouseEnter);
+    window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
     return () => {
       document.body.classList.remove('custom-cursor-active');
       window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mouseover', checkHover);
-      document.body.removeEventListener('mouseleave', handleMouseLeave);
-      document.body.removeEventListener('mouseenter', handleMouseEnter);
+      window.removeEventListener('mouseover', handleMouseOver);
     };
-  }, []);
+  }, [cursorX, cursorY]);
 
   return (
-    <>
-      <style>{`body.custom-cursor-active, body.custom-cursor-active * { cursor: none !important; }`}</style>
-      <div className={`fixed inset-0 pointer-events-none z-[9999] hidden md:block overflow-hidden transition-opacity duration-300 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
-        <motion.div className="fixed top-0 left-0 border border-blue-400 mix-blend-difference will-change-transform" style={{ x: cursorXSpring, y: cursorYSpring, translateX: "-50%", translateY: "-50%" }} animate={{ width: isHovering ? 48 : 30, height: isHovering ? 48 : 30, rotate: isHovering ? 45 : 0, scale: isHovering ? 1.2 : 1 }} transition={{ type: "spring", stiffness: 400, damping: 28 }}>
-          <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" /><div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" /><div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" /><div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
-        </motion.div>
-        <motion.div className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference will-change-transform" style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}><div className="w-1 h-4 bg-blue-500 absolute" /><div className="w-4 h-1 bg-blue-500 absolute" /></motion.div>
-      </div>
-    </>
+    <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
+      {/* Vòng ngoài - Sử dụng spring cho độ trễ mượt mà */}
+      <motion.div
+        className="fixed top-0 left-0 border border-blue-400 mix-blend-difference will-change-transform"
+        style={{
+          x: cursorXSpring,
+          y: cursorYSpring,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+        animate={{
+          width: isHovering ? 60 : 32,
+          height: isHovering ? 60 : 32,
+          rotate: isHovering ? 90 : 0,
+        }}
+      >
+        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" />
+        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" />
+        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" />
+        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
+      </motion.div>
+
+      {/* Tâm điểm - Đi theo chuột chính xác 1:1 */}
+      <motion.div
+        className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference"
+        style={{
+          x: cursorX,
+          y: cursorY,
+          translateX: "-50%",
+          translateY: "-50%",
+        }}
+      >
+        <div className="w-1 h-4 bg-blue-500 absolute" />
+        <div className="w-4 h-1 bg-blue-500 absolute" />
+      </motion.div>
+    </div>
   );
 }
 
@@ -101,6 +132,7 @@ function TerminalIntro({ onComplete }: { onComplete: () => void }) {
 const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }) => {
   const [displayedText, setDisplayedText] = useState("");
   const [index, setIndex] = useState(0);
+
   useEffect(() => {
     const currentText = texts[index];
     const count = new MotionValue(0);
@@ -120,7 +152,21 @@ const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }
     });
     return () => controls.stop();
   }, [index, texts, delay]);
-  return <span className="inline-flex items-center min-w-[10px]"><span className="whitespace-pre">{displayedText}</span><motion.span animate={{ opacity: [1, 0] }} transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }} className="inline-block w-[2px] h-[1em] bg-blue-500 ml-1 align-middle" /></span>;
+
+  return (
+    // Thêm h-[1.2em] để giữ chiều cao và whitespace-nowrap để không bị nhảy dòng
+    <span className="inline-block relative h-[1.2em] leading-none align-baseline">
+      <span className="invisible">M</span> {/* Kỹ thuật giữ chiều cao dòng tối thiểu */}
+      <span className="absolute left-0 top-0 whitespace-nowrap">
+        {displayedText}
+        <motion.span
+          animate={{ opacity: [1, 0] }}
+          transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+          className="inline-block w-[2px] h-[1em] bg-blue-500 ml-1 align-middle"
+        />
+      </span>
+    </span>
+  );
 };
 
 // 4. Các Components nhỏ khác (SkillBadge, ExperienceItem, ScrollToTop, TiltCard, ContactSection...)
@@ -275,7 +321,7 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
             </div>
           </div>
         </div>
-        
+
         <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" />
         {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
           <div className="absolute inset-0 z-0">
@@ -443,7 +489,12 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
                   {/* ... Các phần text giới thiệu ... */}
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
-                  <div className="mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex gap-2"><span>I am a</span><span className="font-bold text-slate-800 dark:text-blue-400"><Typewriter texts={roles} /></span></div>
+                  <div className="h-8 md:h-10 mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex items-center gap-2 overflow-hidden">
+                    <span className="flex-shrink-0">I am a</span>
+                    <span className="font-bold text-slate-800 dark:text-blue-400">
+                      <Typewriter texts={roles} />
+                    </span>
+                  </div>
                   <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
                   <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
 
@@ -462,28 +513,69 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
                 </motion.div>
 
                 {/* RIGHT COL - AVATAR */}
-                <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, delay: 0.2 }} className="order-1 lg:order-2 flex justify-center relative">
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.2 }}
+                  className="order-1 lg:order-2 flex justify-center relative"
+                >
                   <div className="relative w-72 h-72 md:w-96 md:h-96">
-                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-30 blur-2xl animate-pulse" />
-                    <motion.div animate={{ y: [-10, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }} className="relative w-full h-full">
-                      <div className="absolute inset-0 border border-blue-500/20 rounded-full animate-[spin_10s_linear_infinite]" />
-                      <div className="absolute inset-4 border border-dashed border-purple-500/20 rounded-full animate-[spin_15s_linear_infinite_reverse]" />
+                    {/* Vòng glow phía sau */}
+                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-20 blur-3xl animate-pulse" />
+
+                    <motion.div
+                      animate={{ y: [-8, 8] }}
+                      transition={{
+                        repeat: Infinity,
+                        repeatType: "mirror",
+                        duration: 4, // Tăng thời gian để float chậm và mượt hơn
+                        ease: "easeInOut"
+                      }}
+                      className="relative w-full h-full smooth-float" // Thêm class smooth-float
+                    >
                       <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
                         {personalInfo.avatar ? (
-                          // DÙNG NEXT/IMAGE Ở ĐÂY
                           <Image
                             src={personalInfo.avatar}
                             alt="Avatar"
                             fill
                             priority
-                            className="object-cover hover:scale-110 transition-transform duration-700"
+                            className="object-cover transition-transform duration-700 hover:scale-105"
+                            sizes="(max-width: 768px) 288px, 384px"
                           />
-                        ) : (<div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>)}
+                        ) : <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>}
                       </div>
                     </motion.div>
-                    {/* Badges */}
-                    <motion.div animate={{ y: [0, -10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2, ease: "easeInOut" }} className="absolute -right-4 top-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400"><Code2 size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Role</p><p className="text-sm font-bold text-slate-800 dark:text-white">Dev & BA</p></div></motion.div>
-                    <motion.div animate={{ y: [0, 10] }} transition={{ repeat: Infinity, repeatType: "mirror", duration: 2.5, ease: "easeInOut", delay: 0.5 }} className="absolute -left-4 bottom-10 bg-white/90 dark:bg-slate-800/90 backdrop-blur p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Calendar size={20} /></div><div><p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase">Exp</p><p className="text-sm font-bold text-slate-800 dark:text-white">1+ Years</p></div></motion.div>
+
+                    {/* Badge 1 - Tối ưu chữ không bị khựng */}
+                    <motion.div
+                      animate={{ y: [0, -12] }}
+                      transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
+                      className="absolute -right-4 top-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
+                    >
+                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400 flex-shrink-0">
+                        <Code2 size={20} />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Role</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">Dev & BA</p>
+                      </div>
+                    </motion.div>
+
+                    {/* Badge 2 - Tối ưu chữ không bị khựng */}
+                    <motion.div
+                      animate={{ y: [0, 12] }}
+                      transition={{ repeat: Infinity, repeatType: "mirror", duration: 3.5, ease: "easeInOut", delay: 0.5 }}
+                      className="absolute -left-4 bottom-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
+                    >
+                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400 flex-shrink-0">
+                        <Calendar size={20} />
+                      </div>
+                      <div className="flex flex-col">
+                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Exp</p>
+                        <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">1+ Years</p>
+                      </div>
+                    </motion.div>
                   </div>
                 </motion.div>
               </div>

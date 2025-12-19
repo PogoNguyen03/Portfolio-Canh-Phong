@@ -79,17 +79,32 @@ html {
 
 /* Ẩn côn trỏ chuột  */
 
+/* Ép trình duyệt tối ưu render cho các phần tử chuyển động */
+.smooth-float {
+  will-change: transform;
+  transform: translateZ(0); /* Kích hoạt tăng tốc phần cứng */
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Tối ưu ẩn con trỏ: Chỉ ẩn khi ở trên máy tính và có class active */
 @media (pointer: fine) {
-  /* Chỉ ẩn khi body có class 'custom-cursor-active' */
-  body.custom-cursor-active {
-    cursor: none;
+  body.custom-cursor-active,
+  body.custom-cursor-active a,
+  body.custom-cursor-active button,
+  body.custom-cursor-active [role="button"] {
+    cursor: none !important;
   }
-  
-  body.custom-cursor-active a, 
-  body.custom-cursor-active button, 
-  body.custom-cursor-active input, 
-  body.custom-cursor-active textarea, 
-  body.custom-cursor-active select {
-    cursor: none;
-  }
+}
+
+/* Animation gradient mượt hơn */
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-move 8s ease infinite;
+}
+
+@keyframes gradient-move {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
