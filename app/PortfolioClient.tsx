@@ -15,6 +15,7 @@ import { submitContactForm } from '@/lib/adminActions';
 import { trackVisit } from '@/lib/analyticsActions';
 import { toast } from 'sonner';
 import dynamic from 'next/dynamic';
+
 // Load Spline một cách lười (lazy) và chỉ ở phía Client
 const Spline = dynamic(() => import('@splinetool/react-spline'), {
   ssr: false,
@@ -226,13 +227,38 @@ function ScrollToTop() {
   );
 }
 
-function SkillBadge({ item }: { item: string }) {
-  return (<motion.div whileHover={{ scale: 1.05, y: -2 }} className="px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-700 dark:text-slate-200 text-xs md:text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm cursor-default flex items-center gap-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>{item}</motion.div>);
-}
-
-function ExperienceItem({ exp, index }: { exp: any, index: number }) {
+const SkillBadge = React.memo(function SkillBadge({ item }: { item: string }) {
   return (
-    <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ delay: index * 0.1 }} className="relative pl-8 md:pl-0">
+    <motion.div
+      whileHover={{ scale: 1.05, y: -2 }}
+      className="px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md
+                 text-slate-700 dark:text-slate-200 text-xs md:text-sm font-medium
+                 rounded-lg border border-slate-200 dark:border-slate-700
+                 shadow-sm cursor-default flex items-center gap-2
+                 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"
+    >
+      <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
+      {item}
+    </motion.div>
+  );
+});
+
+
+const ExperienceItem = React.memo(function ExperienceItem({
+  exp,
+  index,
+}: {
+  exp: any;
+  index: number;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      whileInView={{ opacity: 1, x: 0 }}
+      viewport={{ once: true, amount: 0.5 }}
+      transition={{ delay: index * 0.1 }}
+      className="relative pl-8 md:pl-0"
+    >
       <div className="md:grid md:grid-cols-12 md:gap-8 group">
         <div className="hidden md:block md:col-span-3 text-right pt-2"><span className="inline-block px-3 py-1 bg-slate-100 dark:bg-slate-800/50 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-400 border border-transparent group-hover:border-blue-200 dark:group-hover:border-blue-900 transition-colors">{exp.period}</span></div>
         <div className="absolute left-0 md:left-auto md:relative md:col-span-1 flex justify-center h-full"><div className="h-full w-[2px] bg-slate-200 dark:bg-slate-800 relative group-hover:bg-blue-200 dark:group-hover:bg-blue-900 transition-colors"><div className="absolute top-2 -left-[5px] w-3 h-3 bg-white dark:bg-slate-900 border-2 border-blue-500 rounded-full z-10 shadow-[0_0_0_4px_rgba(59,130,246,0.2)]"></div></div></div>
@@ -247,7 +273,7 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
       </div>
     </motion.div>
   );
-}
+});
 
 function TiltCard({ children }: { children: React.ReactNode }) {
   const x = useMotionValue(0); const y = useMotionValue(0);
@@ -261,7 +287,13 @@ function TiltCard({ children }: { children: React.ReactNode }) {
 }
 
 // 5. Project Card (Đã tối ưu dùng next/image)
-function ProjectCard({ project, index }: { project: any, index: number }) {
+const ProjectCard = React.memo(function ProjectCard({
+  project,
+  index,
+}: {
+  project: any;
+  index: number;
+}) {
   const stackList = project.stack.split(',').map((s: string) => s.trim());
   const projectIndex = String(index + 1).padStart(2, '0');
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
@@ -343,7 +375,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
       </div>
     </motion.div>
   );
-}
+});
 
 // ContactSection 
 function ContactSection({ personalInfo }: { personalInfo: any }) {
