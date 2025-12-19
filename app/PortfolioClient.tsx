@@ -21,8 +21,8 @@ const Spline = dynamic(() => import('@splinetool/react-spline'), {
   loading: () => <div className="h-full w-full bg-slate-800 animate-pulse rounded-3xl" />
 });
 
-const CustomCursor = dynamic(() => import('./components/CustomCursor'), { 
-  ssr: false 
+const CustomCursor = dynamic(() => import('./components/CustomCursor'), {
+  ssr: false
 });
 
 // --- COMPONENTS CON (Đã tối ưu) ---
@@ -331,7 +331,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 group-hover/img:scale-105"
-                  // unoptimized={true}
+                // unoptimized={true}
                 />
                 <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
                   {isPrivate && (<div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity"><Lock size={16} /> Private Access</div>)}
@@ -345,11 +345,23 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   );
 }
 
-// ... ContactSection bạn giữ nguyên code cũ ...
+// ContactSection 
 function ContactSection({ personalInfo }: { personalInfo: any }) {
   const [status, setStatus] = useState<any>(null);
   const [isPending, setIsPending] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      // 1024px là điểm bắt đầu của desktop (lg) trong config của bạn
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleCopy = async (text: string, label: string) => {
     // 1. Kiểm tra xem API có tồn tại và đang ở môi trường bảo mật không
@@ -448,7 +460,11 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
         </div>
 
 
-        <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" />
+        {!isMobile ? (
+          <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" />
+        ) : (
+          <div className="hidden lg:block h-[400px]" />
+        )}
         {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
           <div className="absolute inset-0 z-0">
           </div>
@@ -482,7 +498,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30, restDelta: 0.001 });
-  
+
   const CustomCursor = dynamic(() => import('./components/CustomCursor'), { ssr: false });
   // Logic Intro & Theme
   useEffect(() => {
@@ -606,7 +622,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Sun size={24} /> : <Moon size={24} />}</motion.button>
 
           {/* MAIN CONTENT */}
-          <main className="max-w-6xl mx-auto px-4 md:px-8 pb-24 pt-32 relative z-10">
+          <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
             {/* HERO SECTION */}
             <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
               {/* ... Nội dung Hero Section giữ nguyên ... */}
