@@ -14,6 +14,7 @@ import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTrans
 import { submitContactForm } from '@/lib/adminActions';
 import { trackVisit } from '@/lib/analyticsActions';
 import Spline from '@splinetool/react-spline';
+import { toast } from 'sonner';
 
 
 // --- COMPONENTS CON (Đã tối ưu) ---
@@ -174,7 +175,7 @@ const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }
 
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
-  
+
   useEffect(() => {
     const toggleVisibility = () => window.scrollY > 500 ? setIsVisible(true) : setIsVisible(false);
     window.addEventListener("scroll", toggleVisibility);
@@ -186,17 +187,17 @@ function ScrollToTop() {
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.button 
-          initial={{ opacity: 0, scale: 0.5, y: 30 }} 
-          animate={{ opacity: 1, scale: 1, y: 0 }} 
-          exit={{ opacity: 0, scale: 0.5, y: 30 }} 
-          whileHover={{ 
-            scale: 1.1, 
+        <motion.button
+          initial={{ opacity: 0, scale: 0.5, y: 30 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.5, y: 30 }}
+          whileHover={{
+            scale: 1.1,
             backgroundColor: "rgba(59, 130, 246, 0.2)", // Sáng lên nhẹ khi hover
-            y: -5 
+            y: -5
           }}
           whileTap={{ scale: 0.95 }}
-          onClick={scrollToTop} 
+          onClick={scrollToTop}
           // HIỆU ỨNG FROSTED GLASS (KÍNH MỜ) THUẦN KHIẾT
           className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 
                      bg-white/10 dark:bg-slate-800/20 
@@ -207,7 +208,7 @@ function ScrollToTop() {
                      flex items-center justify-center"
         >
           <ArrowUp size={24} className="drop-shadow-sm" />
-          
+
           {/* Lớp phủ bóng nhẹ tạo hiệu ứng khối thủy tinh */}
           <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
         </motion.button>
@@ -300,7 +301,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
               <Github size={20} />
             </a>
           )}
-          
+
 
           <div className={`hidden md:block absolute -bottom-10 -z-10 text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>
             {projectIndex}
@@ -341,6 +342,45 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
   const [isPending, setIsPending] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
 
+  const handleCopy = async (text: string, label: string) => {
+    // 1. Kiểm tra xem API có tồn tại và đang ở môi trường bảo mật không
+    if (typeof window !== 'undefined' && navigator.clipboard && window.isSecureContext) {
+      try {
+        await navigator.clipboard.writeText(text);
+        toast.success(`Copied ${label} to clipboard!`);
+      } catch (err) {
+        toast.error("Failed to copy!");
+      }
+    } else {
+      // 2. Phương án dự phòng (Fallback) nếu Clipboard API không khả dụng
+      try {
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+
+        // Đảm bảo không làm nhảy giao diện
+        textArea.style.position = "fixed";
+        textArea.style.left = "-9999px";
+        textArea.style.top = "0";
+        document.body.appendChild(textArea);
+
+        textArea.focus();
+        textArea.select();
+
+        const successful = document.execCommand('copy');
+        document.body.removeChild(textArea);
+
+        if (successful) {
+          toast.success(`Copied ${label} to clipboard!`);
+        } else {
+          throw new Error('Copy command failed');
+        }
+      } catch (err) {
+        toast.error("Browser doesn't support copying!");
+        console.error("Copy error:", err);
+      }
+    }
+  };
+
   async function handleSubmit(formData: FormData) {
     setIsPending(true);
     const res = await submitContactForm(formData);
@@ -370,13 +410,25 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
                 <div className="p-4 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-2xl"><User size={24} /></div>
                 <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Full Name</p><p className="text-xl font-bold text-slate-900 dark:text-white">{personalInfo.name}</p></div>
               </div>
-              <div className="flex items-center gap-5">
-                <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl"><Phone size={24} /></div>
-                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone Number</p><a href={`tel:${personalInfo.phone}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{personalInfo.phone}</a></div>
+              <div
+                className="flex items-center gap-5 cursor-pointer group"
+                onClick={() => handleCopy(personalInfo.phone, "Phone number")}
+              >
+                <div className="p-4 bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded-2xl group-hover:scale-110 transition-transform"><Phone size={24} /></div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Phone Number</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors">{personalInfo.phone}</p>
+                </div>
               </div>
-              <div className="flex items-center gap-5">
-                <div className="p-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl"><Mail size={24} /></div>
-                <div><p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email Address</p><a href={`mailto:${personalInfo.email}`} className="text-xl font-bold text-slate-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors break-all">{personalInfo.email}</a></div>
+              <div
+                className="flex items-center gap-5 cursor-pointer group"
+                onClick={() => handleCopy(personalInfo.email, "Email address")}
+              >
+                <div className="p-4 bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400 rounded-2xl group-hover:scale-110 transition-transform"><Mail size={24} /></div>
+                <div>
+                  <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">Email Address</p>
+                  <p className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-blue-600 transition-colors break-all">{personalInfo.email}</p>
+                </div>
               </div>
               <div className="flex items-center gap-5">
                 <div className="p-4 bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400 rounded-2xl"><MapPin size={24} /></div>

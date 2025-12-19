@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { readData } from "@/lib/adminActions"; // Import hàm đọc dữ liệu
+import { Toaster } from 'sonner';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,8 +28,8 @@ export async function generateMetadata(): Promise<Metadata> {
   // 2. Trả về cấu hình SEO chuẩn
   return {
     title: {
-      template: `%s | ${name}`, 
-      default: `${name} - ${title}`, 
+      template: `%s | ${name}`,
+      default: `${name} - ${title}`,
     },
     description: summary,
     keywords: [
@@ -42,15 +43,15 @@ export async function generateMetadata(): Promise<Metadata> {
     ],
     authors: [{ name: name }],
     creator: name,
-    
+
     openGraph: {
       title: `${name} - ${title}`,
       description: summary,
-      url: 'https://portfolio-canh-phong.vercel.app', 
+      url: 'https://portfolio-canh-phong.vercel.app',
       siteName: `${name}'s Portfolio`,
       images: [
         {
-          url: avatar, 
+          url: avatar,
           width: 800,
           height: 600,
           alt: `${name} Avatar`,
@@ -68,7 +69,7 @@ export async function generateMetadata(): Promise<Metadata> {
     },
 
     icons: {
-      icon: '/favicon.ico', 
+      icon: '/favicon.ico',
     },
   };
 }
@@ -79,12 +80,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark"> 
+    <html lang="en" className="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0b1121] text-slate-200`}
       >
         {children}
+        <Toaster position="top-center" richColors />
       </body>
     </html>
   );
 }
+
