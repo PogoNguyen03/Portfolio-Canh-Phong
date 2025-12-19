@@ -174,16 +174,43 @@ const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }
 
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
+  
   useEffect(() => {
     const toggleVisibility = () => window.scrollY > 500 ? setIsVisible(true) : setIsVisible(false);
     window.addEventListener("scroll", toggleVisibility);
     return () => window.removeEventListener("scroll", toggleVisibility);
   }, []);
+
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
+
   return (
     <AnimatePresence>
       {isVisible && (
-        <motion.button initial={{ opacity: 0, scale: 0.5 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.5 }} onClick={scrollToTop} className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 bg-blue-600 hover:bg-blue-500 text-white rounded-full shadow-lg shadow-blue-500/30 transition-all hover:-translate-y-1"><ArrowUp size={24} /></motion.button>
+        <motion.button 
+          initial={{ opacity: 0, scale: 0.5, y: 30 }} 
+          animate={{ opacity: 1, scale: 1, y: 0 }} 
+          exit={{ opacity: 0, scale: 0.5, y: 30 }} 
+          whileHover={{ 
+            scale: 1.1, 
+            backgroundColor: "rgba(59, 130, 246, 0.2)", // Sáng lên nhẹ khi hover
+            y: -5 
+          }}
+          whileTap={{ scale: 0.95 }}
+          onClick={scrollToTop} 
+          // HIỆU ỨNG FROSTED GLASS (KÍNH MỜ) THUẦN KHIẾT
+          className="fixed bottom-24 right-6 md:bottom-8 md:right-8 z-50 p-3 
+                     bg-white/10 dark:bg-slate-800/20 
+                     backdrop-blur-xl border border-white/20 dark:border-slate-700/50
+                     text-blue-600 dark:text-blue-400 rounded-full 
+                     shadow-2xl shadow-black/10
+                     transition-colors duration-300
+                     flex items-center justify-center"
+        >
+          <ArrowUp size={24} className="drop-shadow-sm" />
+          
+          {/* Lớp phủ bóng nhẹ tạo hiệu ứng khối thủy tinh */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
+        </motion.button>
       )}
     </AnimatePresence>
   );
@@ -273,6 +300,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
               <Github size={20} />
             </a>
           )}
+          
 
           <div className={`hidden md:block absolute -bottom-10 -z-10 text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>
             {projectIndex}

@@ -12,7 +12,7 @@
     "graduationType": "Very Good",
     "gpa": "3.27 / 4.0",
     "languages": "English (TOEIC 570)",
-    "avatar": "/uploads/avatar-1765940671607.jpg",
+    "avatar": "/uploads/avatar-1766120344220.png",
     "cvPath": "/uploads/cv-1765868365093.pdf"
   },
   "skills": {
@@ -103,7 +103,7 @@
       "id": 1,
       "name": "Digital Wedding Invitation Platform",
       "role": "Full Stack Developer & System Architect",
-      "teamSize": "Solo (1 Member)", 
+      "teamSize": "Solo (1 Member)",
       "stack": "Next.js, Prisma, SQL",
       "overview": "Architected a scalable platform allowing users to generate personalized QR codes for event check-ins.",
       "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication.",
