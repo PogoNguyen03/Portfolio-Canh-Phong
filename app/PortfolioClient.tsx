@@ -8,7 +8,7 @@ import {
   GitCommit, ArrowUp, Check, Copy, X,
   Send, User, AtSign, MessageSquare, Paperclip,
   GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar,
-  Database, Wrench
+  Database, Wrench, Users, UserCircle
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform, animate, MotionValue } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
@@ -229,7 +229,6 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   const projectIndex = String(index + 1).padStart(2, '0');
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
   const isEven = index % 2 === 0;
-  const isPrivate = project.visibility === 'Private';
   const handleViewDetail = () => { sessionStorage.setItem("projectScrollPos", window.scrollY.toString()); };
 
   return (
@@ -238,9 +237,46 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
       <div className="flex-1 relative z-10">
         <div className={`flex items-center gap-3 mb-3 md:mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}><span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">Featured Project</span><span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${isPrivate ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'}`}>{isPrivate ? <Lock size={10} /> : <Globe size={10} />}{project.visibility || 'Public'}</span></div>
         <h3 className={`text-2xl md:text-4xl font-extrabold text-slate-900 dark:text-white mb-4 md:mb-6 ${isEven ? 'text-left' : 'md:text-right text-left'}`}><Link href={`/project/${project.id}`} onClick={handleViewDetail} className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">{project.name}</Link></h3>
+        <div className={`flex flex-wrap gap-4 mb-4 text-sm font-medium ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+          <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+            <UserCircle size={16} className="text-blue-500" />
+            <span>{project.role}</span>
+          </div>
+          <div className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
+            <Users size={16} className="text-purple-500" />
+            <span>{project.teamSize || 'Solo'}</span>
+          </div>
+        </div>
         <div className={`relative transition-transform hover:-translate-y-1 duration-300 md:p-8 md:bg-white md:dark:bg-slate-900/90 md:rounded-2xl md:shadow-xl md:border md:border-slate-100 md:dark:border-slate-800 md:backdrop-blur-sm ${isEven ? 'md:mr-0 md:-mr-16' : 'md:ml-0 md:-ml-16'}`}><p className="text-slate-600 dark:text-slate-400 leading-relaxed text-sm md:text-base">{project.overview}</p></div>
         <div className={`flex flex-wrap gap-2 mt-4 md:mt-6 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>{stackList.map((tech: string, i: number) => (<span key={i} className="text-xs font-bold px-3 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-full font-mono">{tech}</span>))}</div>
-        <div className={`mt-6 md:mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}><Link href={`/project/${project.id}`} onClick={handleViewDetail} className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors">View Case Study <ArrowUp className="rotate-45 transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} /></Link>{!isPrivate && project.github && (<a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub"><Github size={20} /></a>)}{!isPrivate && project.demo && (<a href={project.demo} target="_blank" className="p-2 text-slate-500 hover:text-blue-600 dark:hover:text-blue-400 transition-colors" title="Live Demo"><ExternalLink size={20} /></a>)}<div className={`hidden md:block absolute -bottom-10 -z-10 text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>{projectIndex}</div></div>
+        <div className={`mt-6 md:mt-8 flex items-center gap-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}>
+          {/* Thay thế nút View Case Study bằng logic Demo Link */}
+          {project.demo ? (
+            <a
+              href={project.demo}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group/link flex items-center gap-2 text-slate-900 dark:text-white font-bold text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              Live Demo <ExternalLink className="transition-transform group-hover/link:translate-x-1 group-hover/link:-translate-y-1" size={18} />
+            </a>
+          ) : (
+            <div className="flex items-center gap-2 text-slate-400 dark:text-slate-500 font-bold text-sm cursor-help" title="Dự án này hiện chưa có link demo công khai">
+              Not Deployed Yet <X size={16} />
+            </div>
+          )}
+
+          {/* Các nút icon Github và Demo nhỏ bên cạnh (nếu bạn vẫn muốn giữ) */}
+          {!isPrivate && project.github && (
+            <a href={project.github} target="_blank" className="p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white transition-colors" title="GitHub">
+              <Github size={20} />
+            </a>
+          )}
+
+          <div className={`hidden md:block absolute -bottom-10 -z-10 text-[180px] font-black text-slate-100 dark:text-slate-800/30 leading-none select-none pointer-events-none transition-all duration-500 ${isEven ? '-right-10' : '-left-10'}`}>
+            {projectIndex}
+          </div>
+        </div>
       </div>
       {/* Image with next/image */}
       <div className="flex-[1.2] relative group/img w-full">

@@ -100,38 +100,33 @@
   ],
   "projects": [
     {
+      "id": 1,
       "name": "Digital Wedding Invitation Platform",
       "role": "Full Stack Developer & System Architect",
+      "teamSize": "Solo (1 Member)", 
       "stack": "Next.js, Prisma, SQL",
       "overview": "Architected a scalable platform allowing users to generate personalized QR codes for event check-ins.",
       "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication.",
       "github": "https://github.com",
       "demo": "https://wedding-demo.vercel.app",
-      "video": "",
-      "visibility": "Private",
       "images": [
         "/uploads/cv-1766048757290.jfif",
-        "/uploads/cv-1766048759954.jfif",
-        "/uploads/cv-1766048762697.jfif"
-      ],
-      "id": 1
+        "/uploads/cv-1765868365093.pdf"
+      ]
     },
     {
+      "id": 2,
       "name": "2D RPG Game Engine",
       "role": "Game Developer",
+      "teamSize": "Team of 2",
       "stack": "Core Java, NetBeans",
       "overview": "Developed a Java-based game engine from scratch, applying advanced OOP principles.",
       "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly.",
       "github": "",
       "demo": "",
-      "video": "",
-      "visibility": "Private",
       "images": [
-        "/uploads/cv-1766048770175.jfif",
-        "/uploads/cv-1766048772584.jfif",
-        "/uploads/cv-1766048775320.jfif"
-      ],
-      "id": 2
+        "/uploads/cv-1766048770175.jfif"
+      ]
     }
   ]
 }
