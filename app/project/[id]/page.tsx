@@ -37,6 +37,7 @@ export default async function ProjectDetail({ params }: { params: Promise<{ id: 
     }
 
     const stackList = project.stack ? project.stack.split(',').map((s: string) => s.trim()) : [];
+    const isPrivate = project.visibility === 'Personal Project';
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#0b1121] text-slate-900 dark:text-slate-200 font-sans selection:bg-blue-500/30">
