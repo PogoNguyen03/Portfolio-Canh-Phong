@@ -12,7 +12,6 @@ import {
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform, animate, MotionValue } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
-import { trackVisit } from '@/lib/analyticsActions';
 import Spline from '@splinetool/react-spline';
 import { toast } from 'sonner';
 
@@ -484,8 +483,6 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
       const username = data.personalInfo.github.split('/').pop() || '';
       setGithubUsername(username);
     }
-
-    trackVisit();
   }, [data]); // Chạy 1 lần khi có data
 
   const handleIntroComplete = () => {

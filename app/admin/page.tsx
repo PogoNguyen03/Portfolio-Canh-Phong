@@ -96,36 +96,6 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* --- STATS BAR --- */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          {stats.map((stat, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900/80 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between">
-              <div>
-                <p className="text-slate-500 dark:text-slate-400 text-sm font-bold uppercase tracking-wider mb-1">{stat.label}</p>
-                <p className="text-3xl font-black text-slate-900 dark:text-white">{stat.value}</p>
-              </div>
-              <div className={`p-4 rounded-xl ${stat.bg} ${stat.color}`}>
-                <stat.icon size={24} />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Hiển thị chi tiết IP truy cập gần nhất (Optional) */}
-        {statsData.recentLogs.length > 0 && (
-          <div className="mb-10 bg-white dark:bg-slate-900 p-6 rounded-2xl border border-slate-200 dark:border-slate-800">
-            <h3 className="text-sm font-bold text-slate-500 uppercase mb-4">Recent Visitors (Last 5)</h3>
-            <div className="space-y-2">
-              {(statsData.recentLogs as any[]).map((log, idx) => (
-                <div key={idx} className="flex justify-between text-sm border-b border-slate-100 dark:border-slate-800 pb-2 last:border-0">
-                  <span className="font-mono text-blue-600 dark:text-blue-400">{log.ip}</span>
-                  <span className="text-slate-500">{new Date(log.timestamp).toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
         {/* --- MAIN GRID --- */}
         <h2 className="text-sm font-bold text-slate-400 uppercase tracking-widest mb-4 ml-1">Management Modules</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
