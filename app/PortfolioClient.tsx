@@ -431,22 +431,6 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
             className="w-full h-full max-w-[500px]"
           />
         </motion.div>
-
-        {/* <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" /> */}
-        {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
-          <div className="absolute inset-0 z-0">
-          </div>
-          <div className="absolute inset-0 z-10 flex items-end justify-center pb-8 pointer-events-none">
-            <motion.button
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-slate-900/80 dark:bg-blue-600/20 backdrop-blur-xl border border-white/10 rounded-full shadow-2xl"
-            >
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <span className="text-[11px] font-bold text-white uppercase tracking-tighter">Live Preview</span>
-            </motion.button>
-          </div>
-        </div> */}
       </div>
     </section>
   );
@@ -548,8 +532,8 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           {/* Background Effects */}
           <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
-            <motion.div animate={{ x: [0, 50, 0], y: [0, -50, 0] }} transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }} className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[120px]" />
-            <motion.div animate={{ x: [0, -50, 0], y: [0, 50, 0] }} transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/10 dark:bg-purple-600/20 rounded-full blur-[120px]" />
+            <motion.div animate={{ x: [0, 50, 0], y: [0, -50, 0] }} transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }} className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[60px]" />
+            <motion.div animate={{ x: [0, -50, 0], y: [0, 50, 0] }} transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/10 dark:bg-purple-600/20 rounded-full blur-[60px]" />
           </div>
 
           {/* ... PHẦN HEADER VÀ MOBILE NAV GIỮ NGUYÊN ... */}
