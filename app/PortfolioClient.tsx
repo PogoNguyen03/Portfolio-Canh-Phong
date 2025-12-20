@@ -20,87 +20,87 @@ import { toast } from 'sonner';
 // --- COMPONENTS CON (Đã tối ưu) ---
 
 // 1. Custom Cursor (Bản tối ưu hiệu năng - Không gây lag)
-function CustomCursor() {
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+// function CustomCursor() {
+//   const cursorX = useMotionValue(-100);
+//   const cursorY = useMotionValue(-100);
 
-  // Tăng damping để mượt hơn, giảm stiffness để bớt nặng CPU
-  const springConfig = { damping: 40, stiffness: 400, mass: 0.5 };
-  const cursorXSpring = useSpring(cursorX, springConfig);
-  const cursorYSpring = useSpring(cursorY, springConfig);
+//   // Tăng damping để mượt hơn, giảm stiffness để bớt nặng CPU
+//   const springConfig = { damping: 40, stiffness: 400, mass: 0.5 };
+//   const cursorXSpring = useSpring(cursorX, springConfig);
+//   const cursorYSpring = useSpring(cursorY, springConfig);
 
-  const [isHovering, setIsHovering] = useState(false);
+//   const [isHovering, setIsHovering] = useState(false);
 
-  useEffect(() => {
-    // Chỉ kích hoạt trên thiết bị có chuột
-    if (window.matchMedia("(pointer: fine)").matches) {
-      document.body.classList.add('custom-cursor-active');
-    }
+//   useEffect(() => {
+//     // Chỉ kích hoạt trên thiết bị có chuột
+//     if (window.matchMedia("(pointer: fine)").matches) {
+//       document.body.classList.add('custom-cursor-active');
+//     }
 
-    const moveCursor = (e: MouseEvent) => {
-      // Dùng requestAnimationFrame để đồng bộ với tần số quét màn hình
-      window.requestAnimationFrame(() => {
-        cursorX.set(e.clientX);
-        cursorY.set(e.clientY);
-      });
-    };
+//     const moveCursor = (e: MouseEvent) => {
+//       // Dùng requestAnimationFrame để đồng bộ với tần số quét màn hình
+//       window.requestAnimationFrame(() => {
+//         cursorX.set(e.clientX);
+//         cursorY.set(e.clientY);
+//       });
+//     };
 
-    // Sử dụng event delegation để kiểm tra hover (Hiệu năng tốt hơn)
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      const isClickable = !!target.closest('a, button, input, [role="button"]');
-      setIsHovering(isClickable);
-    };
+//     // Sử dụng event delegation để kiểm tra hover (Hiệu năng tốt hơn)
+//     const handleMouseOver = (e: MouseEvent) => {
+//       const target = e.target as HTMLElement;
+//       const isClickable = !!target.closest('a, button, input, [role="button"]');
+//       setIsHovering(isClickable);
+//     };
 
-    window.addEventListener('mousemove', moveCursor, { passive: true });
-    window.addEventListener('mouseover', handleMouseOver, { passive: true });
+//     window.addEventListener('mousemove', moveCursor, { passive: true });
+//     window.addEventListener('mouseover', handleMouseOver, { passive: true });
 
-    return () => {
-      document.body.classList.remove('custom-cursor-active');
-      window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
-  }, [cursorX, cursorY]);
+//     return () => {
+//       document.body.classList.remove('custom-cursor-active');
+//       window.removeEventListener('mousemove', moveCursor);
+//       window.removeEventListener('mouseover', handleMouseOver);
+//     };
+//   }, [cursorX, cursorY]);
 
-  return (
-    <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
-      {/* Vòng ngoài - Sử dụng spring cho độ trễ mượt mà */}
-      <motion.div
-        className="fixed top-0 left-0 border border-blue-400 mix-blend-difference will-change-transform"
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          width: isHovering ? 60 : 32,
-          height: isHovering ? 60 : 32,
-          rotate: isHovering ? 90 : 0,
-        }}
-      >
-        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
-      </motion.div>
+//   return (
+//     <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
+//       {/* Vòng ngoài - Sử dụng spring cho độ trễ mượt mà */}
+//       <motion.div
+//         className="fixed top-0 left-0 border border-blue-400 mix-blend-difference will-change-transform"
+//         style={{
+//           x: cursorXSpring,
+//           y: cursorYSpring,
+//           translateX: "-50%",
+//           translateY: "-50%",
+//         }}
+//         animate={{
+//           width: isHovering ? 60 : 32,
+//           height: isHovering ? 60 : 32,
+//           rotate: isHovering ? 90 : 0,
+//         }}
+//       >
+//         <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" />
+//         <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" />
+//         <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" />
+//         <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
+//       </motion.div>
 
-      {/* Tâm điểm - Đi theo chuột chính xác 1:1 */}
-      <motion.div
-        className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference"
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-      >
-        <div className="w-1 h-4 bg-blue-500 absolute" />
-        <div className="w-4 h-1 bg-blue-500 absolute" />
-      </motion.div>
-    </div>
-  );
-}
+//       {/* Tâm điểm - Đi theo chuột chính xác 1:1 */}
+//       <motion.div
+//         className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference"
+//         style={{
+//           x: cursorX,
+//           y: cursorY,
+//           translateX: "-50%",
+//           translateY: "-50%",
+//         }}
+//       >
+//         <div className="w-1 h-4 bg-blue-500 absolute" />
+//         <div className="w-4 h-1 bg-blue-500 absolute" />
+//       </motion.div>
+//     </div>
+//   );
+// }
 
 // 2. Terminal Intro (Giữ nguyên)
 function TerminalIntro({ onComplete }: { onComplete: () => void }) {
@@ -550,7 +550,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
           <ScrollToTop />
-          <CustomCursor />
+          {/* <CustomCursor /> */}
           <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70]" style={{ scaleX }} />
 
           {/* Background Effects */}
