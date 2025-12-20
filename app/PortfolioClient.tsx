@@ -229,7 +229,7 @@ function TiltCard({ children }: { children: React.ReactNode }) {
 }
 
 // 5. Project Card (Đã tối ưu dùng next/image)
-function ProjectCard({ project, index }: { project: any, index: number }) {
+const ProjectCard = React.memo(({ project, index }: { project: any, index: number }) =>{
   const stackList = project.stack.split(',').map((s: string) => s.trim());
   const projectIndex = String(index + 1).padStart(2, '0');
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
@@ -311,7 +311,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
       </div>
     </motion.div>
   );
-}
+});
 
 // ... ContactSection bạn giữ nguyên code cũ ...
 function ContactSection({ personalInfo }: { personalInfo: any }) {
