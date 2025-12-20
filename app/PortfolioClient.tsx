@@ -1,13 +1,12 @@
 "use client";
 import React, { useEffect, useState, useRef } from 'react';
-import Image from 'next/image'; // <--- QUAN TRỌNG: Dùng cái này để ảnh load nhanh
+import Image from 'next/image';
 import Link from 'next/link';
 import {
   Github, Mail, MapPin, ExternalLink, Code2,
-  Layers, Terminal, Sun, Moon, Monitor,
-  GitCommit, ArrowUp, Check, Copy, X,
-  Send, User, AtSign, MessageSquare, Paperclip,
-  GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar,
+  Layers, Sun, Moon, Monitor,
+  GitCommit, ArrowUp, X,
+  User, GraduationCap, Award, Globe, Lock, Phone, Menu, Calendar,
   Database, Wrench, Users, UserCircle
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform, animate, MotionValue } from 'framer-motion';
@@ -24,7 +23,7 @@ const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-  const springConfig = { damping: 30, stiffness: 200, mass: 0.5 }; // Giảm bớt độ "cứng"
+  const springConfig = { damping: 30, stiffness: 200, mass: 0.5 };
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
   const [isHovering, setIsHovering] = useState(false);
@@ -138,8 +137,6 @@ const Typewriter = ({ texts, delay = 2000 }: { texts: string[], delay?: number }
 };
 
 // 4. Các Components nhỏ khác (SkillBadge, ExperienceItem, ScrollToTop, TiltCard, ContactSection...)
-// (Giữ nguyên code của bạn cho các phần này để tiết kiệm diện tích, chỉ thay đổi ProjectCard bên dưới)
-
 function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
 
@@ -208,7 +205,7 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
 }
 
 function TiltCard({ children }: { children: React.ReactNode }) {
-  const x = useMotionValue(0); 
+  const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useTransform(y, [0.5, -0.5], [10, -10]);
   const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10]);
@@ -220,10 +217,10 @@ function TiltCard({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <motion.div 
-      onMouseMove={handleMouseMove} 
-      onMouseLeave={() => { x.set(0); y.set(0); }} 
-      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} 
+    <motion.div
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { x.set(0); y.set(0); }}
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
       className="relative w-full h-full perspective-1000 will-change-transform" // Thêm will-change-transform
     >
       <div style={{ transform: "translateZ(20px)" }} className="h-full">{children}</div>
@@ -418,15 +415,15 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
           </div>
         </div>
 
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           className="flex justify-center items-center h-[400px] lg:h-[500px]"
         >
-          <Lottie 
-            animationData={contactAnim} 
-            loop={true} 
+          <Lottie
+            animationData={contactAnim}
+            loop={true}
             className="w-full h-full max-w-[500px]"
           />
         </motion.div>
@@ -525,7 +522,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
           <ScrollToTop />
-          
+
           <CustomCursor />
           <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70] hidden md:block" style={{ scaleX }} />
 
@@ -544,7 +541,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
                   const id = item.toLowerCase();
                   const isActive = activeSection === id;
                   return (
-                    <a key={item} href={`#${id}`} onClick={() => setActiveSection(id)} className={`relative px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>{item}{isActive && (<motion.span layoutId="activeNav" className="absolute inset-0 border-2 border-blue-100 dark:border-blue-500/30 rounded-full" transition={{ type: "spring", stiffness: 300, damping: 30 }} />)}</a>
+                    <a key={item} href={`#${id}`} onClick={() => setActiveSection(id)} className={`relative px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>{item}{isActive && (<motion.span layoutId="activeNav" className="absolute inset-0 border-2 border-blue-100 dark:border-blue-500/30 rounded-full" transition={{ type: "tween", stiffness: 300, damping: 30 }} />)}</a>
                   );
                 })}
               </motion.nav>
@@ -573,12 +570,9 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
             {/* HERO SECTION */}
             <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
-              {/* ... Nội dung Hero Section giữ nguyên ... */}
-              {/* Chỉ lưu ý: Phần Avatar dùng Image tối ưu */}
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 {/* LEFT COL */}
                 <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
-                  {/* ... Các phần text giới thiệu ... */}
                   <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
                   <div className="h-8 md:h-10 mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex items-center gap-2 overflow-hidden">
                     <span className="flex-shrink-0">I am a</span>
