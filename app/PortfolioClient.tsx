@@ -229,7 +229,7 @@ function TiltCard({ children }: { children: React.ReactNode }) {
 }
 
 // 5. Project Card (Đã tối ưu dùng next/image)
-const ProjectCard = React.memo(({ project, index }: { project: any, index: number }) =>{
+const ProjectCard = React.memo(({ project, index }: { project: any, index: number }) => {
   const stackList = project.stack.split(',').map((s: string) => s.trim());
   const projectIndex = String(index + 1).padStart(2, '0');
   const coverImage = project.images && project.images.length > 0 ? project.images[0] : null;
@@ -509,6 +509,16 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
     }
   }, [data]);
 
+  //Khóa cuộn trang khi hiển thị intro
+  useEffect(() => {
+    if (showIntro) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => { document.body.style.overflow = 'unset'; };
+  }, [showIntro]);
+
   // Nếu không có data (lỗi server), return null hoặc trang lỗi
   if (!data) return null;
 
@@ -519,188 +529,186 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
   return (
     <>
       <AnimatePresence>{showIntro && <TerminalIntro onComplete={handleIntroComplete} />}</AnimatePresence>
-      {!showIntro && (
-        <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
-          <ScrollToTop />
 
-          <CustomCursor />
-          <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70] hidden md:block" style={{ scaleX }} />
+      <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
+        <ScrollToTop />
+        <CustomCursor />
+        <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70] hidden md:block" style={{ scaleX }} />
 
-          {/* Background Effects */}
-          <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-            <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
-            <BackgroundEffects />
-          </div>
-
-          {/* ... PHẦN HEADER VÀ MOBILE NAV GIỮ NGUYÊN ... */}
-          <div className="hidden md:flex fixed top-6 left-0 right-0 justify-center z-50 px-4 pointer-events-none">
-            <div className="pointer-events-auto flex items-center gap-4">
-              <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50 rounded-full px-6 py-3 flex items-center gap-1">
-                <span className="font-bold text-slate-800 dark:text-white mr-4">{personalInfo.name.split(' ').pop()}</span>
-                {navItems.map((item) => {
-                  const id = item.toLowerCase();
-                  const isActive = activeSection === id;
-                  return (
-                    <a key={item} href={`#${id}`} onClick={() => setActiveSection(id)} className={`relative px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>{item}{isActive && (<motion.span layoutId="activeNav" className="absolute inset-0 border-2 border-blue-100 dark:border-blue-500/30 rounded-full" transition={{ type: "tween", stiffness: 300, damping: 30 }} />)}</a>
-                  );
-                })}
-              </motion.nav>
-              <motion.button initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={toggleTheme} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-3 rounded-full border border-white/20 dark:border-slate-700/50 shadow-lg hover:scale-110 transition-transform text-slate-700 dark:text-yellow-400">{darkMode ? <Sun size={20} /> : <Moon size={20} />}</motion.button>
-            </div>
-          </div>
-
-          <div className="md:hidden fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50">
-            <span className="font-bold text-slate-900 dark:text-white text-lg">{personalInfo.name.split(' ').pop()}</span>
-            <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><Menu size={28} /></button>
-          </div>
-
-          <AnimatePresence>
-            {mobileMenuOpen && (
-              <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed inset-0 z-[100] bg-white dark:bg-slate-950 flex flex-col md:hidden">
-                <div className="p-4 flex justify-end border-b border-slate-100 dark:border-slate-800"><button onClick={() => setMobileMenuOpen(false)} className="p-2 text-slate-500 hover:text-red-500 transition-colors"><X size={32} /></button></div>
-                <div className="flex-1 flex flex-col items-center justify-center gap-8">{navItems.map((item, index) => (<motion.a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} className="text-3xl font-bold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400">{item}</motion.a>))}</div>
-                <div className="p-8 text-center text-slate-400 text-sm">© 2025 {personalInfo.name}</div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Sun size={24} /> : <Moon size={24} />}</motion.button>
-
-          {/* MAIN CONTENT */}
-          <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
-            {/* HERO SECTION */}
-            <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
-              <div className="grid lg:grid-cols-2 gap-12 items-center">
-                {/* LEFT COL */}
-                <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
-                  <div className="h-8 md:h-10 mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex items-center gap-2 overflow-hidden">
-                    <span className="flex-shrink-0">I am a</span>
-                    <span className="font-bold text-slate-800 dark:text-blue-400">
-                      <Typewriter texts={roles} />
-                    </span>
-                  </div>
-                  <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
-                  <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
-
-                  {/* Education & Achievement Grid */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-                    {personalInfo.university && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p><p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p><p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p></div></div>)}
-                    {(personalInfo.gpa || personalInfo.languages) && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Achievements</p><div className="flex flex-col gap-2">{personalInfo.gpa && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><GraduationCap size={16} className="text-blue-600 dark:text-blue-400" /><span>GPA: {personalInfo.gpa}</span></div>)}{personalInfo.languages && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><Globe size={16} className="text-blue-600 dark:text-blue-400" /><span>{personalInfo.languages}</span></div>)}</div></div></div>)}
-                  </div>
-
-                  {/* Buttons */}
-                  <div className="flex flex-wrap gap-4">
-                    <motion.a href={`https://${personalInfo.github}`} target="_blank" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"><Github size={20} /> Github</motion.a>
-                    {personalInfo.cvPath && (<motion.a href={personalInfo.cvPath} download whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Monitor size={20} /> Download CV</motion.a>)}
-                    <motion.a href={`mailto:${personalInfo.email}`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Mail size={20} /> Email</motion.a>
-                  </div>
-                </motion.div>
-
-                {/* RIGHT COL - AVATAR */}
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.6, delay: 0.2 }}
-                  className="order-1 lg:order-2 flex justify-center relative"
-                >
-                  <div className="relative w-72 h-72 md:w-96 md:h-96">
-                    {/* Vòng glow phía sau */}
-                    <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-20 blur-3xl animate-pulse" />
-
-                    <motion.div
-                      animate={{ y: [-8, 8] }}
-                      transition={{
-                        repeat: Infinity,
-                        repeatType: "mirror",
-                        duration: 4, // Tăng thời gian để float chậm và mượt hơn
-                        ease: "easeInOut"
-                      }}
-                      className="relative w-full h-full smooth-float" // Thêm class smooth-float
-                    >
-                      <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
-                        {personalInfo.avatar ? (
-                          <Image
-                            src={personalInfo.avatar}
-                            alt="Avatar"
-                            fill
-                            priority
-                            className="object-cover transition-transform duration-700 hover:scale-105"
-                            sizes="(max-width: 768px) 288px, 384px"
-                          />
-                        ) : <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>}
-                      </div>
-                    </motion.div>
-
-                    {/* Badge 1 - Tối ưu chữ không bị khựng */}
-                    <motion.div
-                      animate={{ y: [0, -12] }}
-                      transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
-                      className="absolute -right-4 top-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
-                    >
-                      <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400 flex-shrink-0">
-                        <Code2 size={20} />
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Role</p>
-                        <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">Dev & BA</p>
-                      </div>
-                    </motion.div>
-
-                    {/* Badge 2 - Tối ưu chữ không bị khựng */}
-                    <motion.div
-                      animate={{ y: [0, 12] }}
-                      transition={{ repeat: Infinity, repeatType: "mirror", duration: 3.5, ease: "easeInOut", delay: 0.5 }}
-                      className="absolute -left-4 bottom-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
-                    >
-                      <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400 flex-shrink-0">
-                        <Calendar size={20} />
-                      </div>
-                      <div className="flex flex-col">
-                        <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Exp</p>
-                        <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">1+ Years</p>
-                      </div>
-                    </motion.div>
-                  </div>
-                </motion.div>
-              </div>
-            </section>
-
-            {/* SKILLS SECTION */}
-            <section id="skills" className="mb-32 scroll-mt-28">
-              {/* ... (Giữ nguyên logic render skills của bạn) ... */}
-              <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Tech Stack<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">My arsenal of tools for building scalable applications.</p></div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Database size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Backend & Database</h3></div><div className="flex flex-wrap gap-2">{[...(skills.programming_Languages || []), ...(skills.backend || []), ...(skills.databases || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"><Monitor size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Frontend & UI</h3></div><div className="flex flex-wrap gap-2">{[...(skills.frontend || []), ...(skills.mobile || []), ...(skills.design_tools || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-                <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400"><Wrench size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Tools & Others</h3></div><div className="flex flex-wrap gap-2">{[...(skills.development_tools || []), ...(skills.testing || []), ...(skills.cms || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
-              </div>
-              <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden"><div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div className="flex items-center gap-3"><div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300"><GitCommit size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3></div></div>{githubUsername ? (<div className="w-full overflow-x-auto pb-2 scrollbar-hide"><img src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`} alt={`GitHub Contributions ${selectedYear}`} className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]" /><p className="text-xs text-slate-400 mt-4 text-center">Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a></p></div>) : (<p className="text-slate-500">Github username not found.</p>)}</div>
-            </section>
-
-            {/* EXPERIENCE SECTION */}
-            <section id="experience" className="mb-32 scroll-mt-28">
-              <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div></div>
-              <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
-            </section>
-
-            {/* PROJECTS SECTION */}
-            <section id="projects" className="mb-32 scroll-mt-28">
-              <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Featured Projects<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">Selected works demonstrating my capabilities.</p></div>
-              <div className="space-y-24 md:space-y-32">
-                {projects.map((project: any, index: number) => (
-                  <ProjectCard key={project.id} project={project} index={index} />
-                ))}
-              </div>
-            </section>
-
-            {/* CONTACT SECTION */}
-            <ContactSection personalInfo={personalInfo} />
-
-          </main>
-          <footer className="py-12 text-center text-slate-400 bg-white/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 backdrop-blur-sm"><div className="max-w-6xl mx-auto px-4"><p className="mb-4">© 2025 {personalInfo.name}. Built with Next.js & Tailwind.</p><div className="flex justify-center gap-6"><a href={`https://${personalInfo.github}`} className="hover:text-blue-500 transition-colors">Github</a><a href={`mailto:${personalInfo.email}`} className="hover:text-blue-500 transition-colors">Contact</a></div></div></footer>
+        {/* Background Effects */}
+        <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+          <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
+          <BackgroundEffects />
         </div>
-      )}
+
+        {/* ... PHẦN HEADER VÀ MOBILE NAV GIỮ NGUYÊN ... */}
+        <div className="hidden md:flex fixed top-6 left-0 right-0 justify-center z-50 px-4 pointer-events-none">
+          <div className="pointer-events-auto flex items-center gap-4">
+            <motion.nav initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border border-white/20 dark:border-slate-700/50 shadow-lg shadow-slate-200/50 dark:shadow-black/50 rounded-full px-6 py-3 flex items-center gap-1">
+              <span className="font-bold text-slate-800 dark:text-white mr-4">{personalInfo.name.split(' ').pop()}</span>
+              {navItems.map((item) => {
+                const id = item.toLowerCase();
+                const isActive = activeSection === id;
+                return (
+                  <a key={item} href={`#${id}`} onClick={() => setActiveSection(id)} className={`relative px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-300 ${isActive ? 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200'}`}>{item}{isActive && (<motion.span layoutId="activeNav" className="absolute inset-0 border-2 border-blue-100 dark:border-blue-500/30 rounded-full" transition={{ type: "tween", stiffness: 300, damping: 30 }} />)}</a>
+                );
+              })}
+            </motion.nav>
+            <motion.button initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={toggleTheme} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-3 rounded-full border border-white/20 dark:border-slate-700/50 shadow-lg hover:scale-110 transition-transform text-slate-700 dark:text-yellow-400">{darkMode ? <Sun size={20} /> : <Moon size={20} />}</motion.button>
+          </div>
+        </div>
+
+        <div className="md:hidden fixed top-0 left-0 right-0 z-50 p-4 flex justify-between items-center bg-white/70 dark:bg-slate-900/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50">
+          <span className="font-bold text-slate-900 dark:text-white text-lg">{personalInfo.name.split(' ').pop()}</span>
+          <button onClick={() => setMobileMenuOpen(true)} className="p-2 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><Menu size={28} /></button>
+        </div>
+
+        <AnimatePresence>
+          {mobileMenuOpen && (
+            <motion.div initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }} transition={{ type: "spring", damping: 25, stiffness: 200 }} className="fixed inset-0 z-[100] bg-white dark:bg-slate-950 flex flex-col md:hidden">
+              <div className="p-4 flex justify-end border-b border-slate-100 dark:border-slate-800"><button onClick={() => setMobileMenuOpen(false)} className="p-2 text-slate-500 hover:text-red-500 transition-colors"><X size={32} /></button></div>
+              <div className="flex-1 flex flex-col items-center justify-center gap-8">{navItems.map((item, index) => (<motion.a key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }} className="text-3xl font-bold text-slate-800 dark:text-slate-200 hover:text-blue-600 dark:hover:text-blue-400">{item}</motion.a>))}</div>
+              <div className="p-8 text-center text-slate-400 text-sm">© 2025 {personalInfo.name}</div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Sun size={24} /> : <Moon size={24} />}</motion.button>
+
+        {/* MAIN CONTENT */}
+        <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
+          {/* HERO SECTION */}
+          <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* LEFT COL */}
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="order-2 lg:order-1">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 text-blue-600 dark:text-blue-300 text-xs font-semibold mb-6"><span className="relative flex h-2 w-2"><span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span><span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span></span>Available for work</div>
+                <div className="h-8 md:h-10 mb-4 text-xl md:text-2xl font-mono text-slate-500 dark:text-slate-400 flex items-center gap-2 overflow-hidden">
+                  <span className="flex-shrink-0">I am a</span>
+                  <span className="font-bold text-slate-800 dark:text-blue-400">
+                    <Typewriter texts={roles} />
+                  </span>
+                </div>
+                <h1 className="text-5xl md:text-7xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.1] mb-6"><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-500 to-purple-600 animate-gradient bg-300%">{personalInfo.name}</span></h1>
+                <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 leading-relaxed mb-8 max-w-lg">{personalInfo.summary}</p>
+
+                {/* Education & Achievement Grid */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+                  {personalInfo.university && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 shrink-0"><GraduationCap size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-0.5">Education</p><p className="text-sm font-bold text-slate-800 dark:text-slate-200 leading-tight">{personalInfo.university}</p><p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{personalInfo.degree} {personalInfo.graduationType && `• ${personalInfo.graduationType}`}</p></div></div>)}
+                  {(personalInfo.gpa || personalInfo.languages) && (<div className="flex items-start gap-3 p-3 bg-white/50 dark:bg-slate-800/30 rounded-xl border border-slate-100 dark:border-slate-700/50"><div className="p-2 rounded-lg bg-purple-50 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400 shrink-0"><Award size={20} /></div><div><p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2">Achievements</p><div className="flex flex-col gap-2">{personalInfo.gpa && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><GraduationCap size={16} className="text-blue-600 dark:text-blue-400" /><span>GPA: {personalInfo.gpa}</span></div>)}{personalInfo.languages && (<div className="flex items-center gap-2 text-sm font-medium text-slate-700 dark:text-slate-200"><Globe size={16} className="text-blue-600 dark:text-blue-400" /><span>{personalInfo.languages}</span></div>)}</div></div></div>)}
+                </div>
+
+                {/* Buttons */}
+                <div className="flex flex-wrap gap-4">
+                  <motion.a href={`https://${personalInfo.github}`} target="_blank" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-5 py-2 rounded-full font-medium shadow-lg hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors flex items-center gap-2"><Github size={20} /> Github</motion.a>
+                  {personalInfo.cvPath && (<motion.a href={personalInfo.cvPath} download whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Monitor size={20} /> Download CV</motion.a>)}
+                  <motion.a href={`mailto:${personalInfo.email}`} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} className="bg-white dark:bg-slate-900 text-slate-800 dark:text-white px-5 py-2 rounded-full font-medium border border-slate-200 dark:border-slate-700 shadow-sm hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2"><Mail size={20} /> Email</motion.a>
+                </div>
+              </motion.div>
+
+              {/* RIGHT COL - AVATAR */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="order-1 lg:order-2 flex justify-center relative"
+              >
+                <div className="relative w-72 h-72 md:w-96 md:h-96">
+                  {/* Vòng glow phía sau */}
+                  <div className="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full opacity-20 blur-3xl animate-pulse" />
+
+                  <motion.div
+                    animate={{ y: [-8, 8] }}
+                    transition={{
+                      repeat: Infinity,
+                      repeatType: "mirror",
+                      duration: 4, // Tăng thời gian để float chậm và mượt hơn
+                      ease: "easeInOut"
+                    }}
+                    className="relative w-full h-full smooth-float" // Thêm class smooth-float
+                  >
+                    <div className="w-full h-full rounded-full overflow-hidden border-4 border-white dark:border-slate-800 shadow-2xl relative z-10 bg-slate-100">
+                      {personalInfo.avatar ? (
+                        <Image
+                          src={personalInfo.avatar}
+                          alt="Avatar"
+                          fill
+                          priority
+                          className="object-cover transition-transform duration-700 hover:scale-105"
+                          sizes="(max-width: 768px) 288px, 384px"
+                        />
+                      ) : <div className="w-full h-full flex items-center justify-center text-4xl font-bold text-slate-300">Me</div>}
+                    </div>
+                  </motion.div>
+
+                  {/* Badge 1 - Tối ưu chữ không bị khựng */}
+                  <motion.div
+                    animate={{ y: [0, -12] }}
+                    transition={{ repeat: Infinity, repeatType: "mirror", duration: 3, ease: "easeInOut" }}
+                    className="absolute -right-4 top-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
+                  >
+                    <div className="p-2 bg-green-100 dark:bg-green-900/30 rounded-lg text-green-600 dark:text-green-400 flex-shrink-0">
+                      <Code2 size={20} />
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Role</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">Dev & BA</p>
+                    </div>
+                  </motion.div>
+
+                  {/* Badge 2 - Tối ưu chữ không bị khựng */}
+                  <motion.div
+                    animate={{ y: [0, 12] }}
+                    transition={{ repeat: Infinity, repeatType: "mirror", duration: 3.5, ease: "easeInOut", delay: 0.5 }}
+                    className="absolute -left-4 bottom-10 bg-white/95 dark:bg-slate-800/95 backdrop-blur-md p-3 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 flex items-center gap-3 z-20 smooth-float"
+                  >
+                    <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400 flex-shrink-0">
+                      <Calendar size={20} />
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-tighter">Exp</p>
+                      <p className="text-sm font-bold text-slate-800 dark:text-white whitespace-nowrap">1+ Years</p>
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* SKILLS SECTION */}
+          <section id="skills" className="mb-32 scroll-mt-28">
+            {/* ... (Giữ nguyên logic render skills của bạn) ... */}
+            <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Tech Stack<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">My arsenal of tools for building scalable applications.</p></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+              <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-blue-300 dark:hover:border-blue-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg text-blue-600 dark:text-blue-400"><Database size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Backend & Database</h3></div><div className="flex flex-wrap gap-2">{[...(skills.programming_Languages || []), ...(skills.backend || []), ...(skills.databases || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+              <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-purple-300 dark:hover:border-purple-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-purple-100 dark:bg-purple-900/30 rounded-lg text-purple-600 dark:text-purple-400"><Monitor size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Frontend & UI</h3></div><div className="flex flex-wrap gap-2">{[...(skills.frontend || []), ...(skills.mobile || []), ...(skills.design_tools || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+              <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-6 rounded-3xl border border-slate-200 dark:border-slate-800 hover:border-orange-300 dark:hover:border-orange-700 transition-colors"><div className="flex items-center gap-3 mb-4"><div className="p-2 bg-orange-100 dark:bg-orange-900/30 rounded-lg text-orange-600 dark:text-orange-400"><Wrench size={24} /></div><h3 className="text-lg font-bold text-slate-800 dark:text-white">Tools & Others</h3></div><div className="flex flex-wrap gap-2">{[...(skills.development_tools || []), ...(skills.testing || []), ...(skills.cms || [])].map((s: string, i: number) => (<SkillBadge key={`${s}-${i}`} item={s} />))}</div></div>
+            </div>
+            <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm p-8 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden"><div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div className="flex items-center gap-3"><div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg text-slate-700 dark:text-slate-300"><GitCommit size={24} /></div><h3 className="text-xl font-bold text-slate-800 dark:text-white">Coding Activity</h3></div></div>{githubUsername ? (<div className="w-full overflow-x-auto pb-2 scrollbar-hide"><img src={`https://ghchart.rshah.org/3b82f6/${githubUsername}?y=${selectedYear}`} alt={`GitHub Contributions ${selectedYear}`} className="w-full min-w-[600px] dark:opacity-80 dark:invert-[0.1]" /><p className="text-xs text-slate-400 mt-4 text-center">Contributions in {selectedYear} • <a href={`https://github.com/${githubUsername}`} target="_blank" className="underline hover:text-blue-500">View Profile</a></p></div>) : (<p className="text-slate-500">Github username not found.</p>)}</div>
+          </section>
+
+          {/* EXPERIENCE SECTION */}
+          <section id="experience" className="mb-32 scroll-mt-28">
+            <div className="flex flex-col md:flex-row justify-between items-start mb-12"><div><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-2">Work History</h2><p className="text-slate-500 dark:text-slate-400">My professional journey.</p></div></div>
+            <div className="space-y-0">{experiences.map((exp: any, index: number) => (<ExperienceItem key={exp.id} exp={exp} index={index} />))}</div>
+          </section>
+
+          {/* PROJECTS SECTION */}
+          <section id="projects" className="mb-32 scroll-mt-28">
+            <div className="text-center mb-16"><h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4 relative inline-block">Featured Projects<span className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-24 h-1.5 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full"></span></h2><p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto mt-6">Selected works demonstrating my capabilities.</p></div>
+            <div className="space-y-24 md:space-y-32">
+              {projects.map((project: any, index: number) => (
+                <ProjectCard key={project.id} project={project} index={index} />
+              ))}
+            </div>
+          </section>
+
+          {/* CONTACT SECTION */}
+          <ContactSection personalInfo={personalInfo} />
+
+        </main>
+        <footer className="py-12 text-center text-slate-400 bg-white/50 dark:bg-slate-900/50 border-t border-slate-200 dark:border-slate-800 backdrop-blur-sm"><div className="max-w-6xl mx-auto px-4"><p className="mb-4">© 2025 {personalInfo.name}. Built with Next.js & Tailwind.</p><div className="flex justify-center gap-6"><a href={`https://${personalInfo.github}`} className="hover:text-blue-500 transition-colors">Github</a><a href={`mailto:${personalInfo.email}`} className="hover:text-blue-500 transition-colors">Contact</a></div></div></footer>
+      </div>
     </>
   );
 }
