@@ -299,7 +299,7 @@ const ProjectCard = React.memo(({ project, index }: { project: any, index: numbe
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover transition-transform duration-700 group-hover/img:scale-105"
-                  unoptimized={true}
+                  // unoptimized={true}
                 />
                 <div className="absolute inset-0 bg-blue-900/20 dark:bg-slate-900/30 group-hover/img:bg-transparent transition-colors duration-500 flex items-center justify-center">
                   {isPrivate && (<div className="bg-black/60 backdrop-blur-sm text-white px-4 py-2 rounded-full flex items-center gap-2 opacity-0 group-hover/img:opacity-100 transition-opacity"><Lock size={16} /> Private Access</div>)}
@@ -554,7 +554,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
                 );
               })}
             </motion.nav>
-            <motion.button initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={toggleTheme} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-3 rounded-full border border-white/20 dark:border-slate-700/50 shadow-lg hover:scale-110 transition-transform text-slate-700 dark:text-yellow-400">{darkMode ? <Sun size={20} /> : <Moon size={20} />}</motion.button>
+            <motion.button initial={{ y: -100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} onClick={toggleTheme} className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl p-3 rounded-full border border-white/20 dark:border-slate-700/50 shadow-lg hover:scale-110 transition-transform text-slate-700 dark:text-yellow-400">{darkMode ? <Moon size={20} /> : <Sun size={20} /> }</motion.button>
           </div>
         </div>
 
@@ -573,7 +573,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           )}
         </AnimatePresence>
 
-        <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Sun size={24} /> : <Moon size={24} />}</motion.button>
+        <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Moon size={24} /> : <Sun size={24} />}</motion.button>
 
         {/* MAIN CONTENT */}
         <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
