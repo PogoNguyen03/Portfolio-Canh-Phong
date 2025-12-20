@@ -417,7 +417,7 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
           </div>
         </div>
 
-        <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" />
+        {/* <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" /> */}
         {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
           <div className="absolute inset-0 z-0">
           </div>
