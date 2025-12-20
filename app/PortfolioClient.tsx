@@ -22,40 +22,29 @@ import { toast } from 'sonner';
 function CustomCursor() {
   const cursorX = useMotionValue(-100);
   const cursorY = useMotionValue(-100);
-
-  // Tăng damping để mượt hơn, giảm stiffness để bớt nặng CPU
-  const springConfig = { damping: 40, stiffness: 400, mass: 0.5 };
+  const springConfig = { damping: 30, stiffness: 200, mass: 0.5 }; // Giảm bớt độ "cứng"
   const cursorXSpring = useSpring(cursorX, springConfig);
   const cursorYSpring = useSpring(cursorY, springConfig);
-
   const [isHovering, setIsHovering] = useState(false);
 
   useEffect(() => {
-    // Chỉ kích hoạt trên thiết bị có chuột
-    if (window.matchMedia("(pointer: fine)").matches) {
-      document.body.classList.add('custom-cursor-active');
-    }
-
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    
     const moveCursor = (e: MouseEvent) => {
-      // Dùng requestAnimationFrame để đồng bộ với tần số quét màn hình
       window.requestAnimationFrame(() => {
         cursorX.set(e.clientX);
         cursorY.set(e.clientY);
       });
     };
 
-    // Sử dụng event delegation để kiểm tra hover (Hiệu năng tốt hơn)
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      const isClickable = !!target.closest('a, button, input, [role="button"]');
-      setIsHovering(isClickable);
+      setIsHovering(!!target.closest('a, button, input, [role="button"]'));
     };
 
     window.addEventListener('mousemove', moveCursor, { passive: true });
     window.addEventListener('mouseover', handleMouseOver, { passive: true });
-
     return () => {
-      document.body.classList.remove('custom-cursor-active');
       window.removeEventListener('mousemove', moveCursor);
       window.removeEventListener('mouseover', handleMouseOver);
     };
@@ -63,39 +52,17 @@ function CustomCursor() {
 
   return (
     <div className="fixed inset-0 pointer-events-none z-[9999] hidden md:block">
-      {/* Vòng ngoài - Sử dụng spring cho độ trễ mượt mà */}
       <motion.div
         className="fixed top-0 left-0 border border-blue-400 mix-blend-difference will-change-transform"
-        style={{
-          x: cursorXSpring,
-          y: cursorYSpring,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
-        animate={{
-          width: isHovering ? 60 : 32,
-          height: isHovering ? 60 : 32,
-          rotate: isHovering ? 90 : 0,
-        }}
-      >
-        <div className="absolute top-0 left-0 w-2 h-2 border-t-2 border-l-2 border-blue-400" />
-        <div className="absolute top-0 right-0 w-2 h-2 border-t-2 border-r-2 border-blue-400" />
-        <div className="absolute bottom-0 left-0 w-2 h-2 border-b-2 border-l-2 border-blue-400" />
-        <div className="absolute bottom-0 right-0 w-2 h-2 border-b-2 border-r-2 border-blue-400" />
-      </motion.div>
-
-      {/* Tâm điểm - Đi theo chuột chính xác 1:1 */}
+        style={{ x: cursorXSpring, y: cursorYSpring, translateX: "-50%", translateY: "-50%" }}
+        animate={{ width: isHovering ? 50 : 30, height: isHovering ? 50 : 30 }}
+      />
       <motion.div
         className="fixed top-0 left-0 flex items-center justify-center mix-blend-difference"
-        style={{
-          x: cursorX,
-          y: cursorY,
-          translateX: "-50%",
-          translateY: "-50%",
-        }}
+        style={{ x: cursorX, y: cursorY, translateX: "-50%", translateY: "-50%" }}
       >
-        <div className="w-1 h-4 bg-blue-500 absolute" />
-        <div className="w-4 h-1 bg-blue-500 absolute" />
+        <div className="w-1 h-3 bg-blue-500 absolute" />
+        <div className="w-3 h-1 bg-blue-500 absolute" />
       </motion.div>
     </div>
   );
@@ -240,14 +207,27 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
 }
 
 function TiltCard({ children }: { children: React.ReactNode }) {
-  const x = useMotionValue(0); const y = useMotionValue(0);
-  const mouseX = useSpring(x, { stiffness: 150, damping: 10 }); const mouseY = useSpring(y, { stiffness: 150, damping: 10 });
+  const x = useMotionValue(0); 
+  const y = useMotionValue(0);
+  const rotateX = useTransform(y, [0.5, -0.5], [10, -10]);
+  const rotateY = useTransform(x, [-0.5, 0.5], [-10, 10]);
+
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top, width, height } = currentTarget.getBoundingClientRect();
-    x.set((clientX - left) / width - 0.5); y.set((clientY - top) / height - 0.5);
+    x.set((clientX - left) / width - 0.5);
+    y.set((clientY - top) / height - 0.5);
   }
-  const rotateX = useTransform(mouseY, [-0.5, 0.5], [10, -10]); const rotateY = useTransform(mouseX, [-0.5, 0.5], [-10, 10]);
-  return (<motion.div onMouseMove={handleMouseMove} onMouseLeave={() => { x.set(0); y.set(0); }} style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} className="relative w-full h-full perspective-1000"><div style={{ transform: "translateZ(20px)" }} className="h-full">{children}</div></motion.div>);
+
+  return (
+    <motion.div 
+      onMouseMove={handleMouseMove} 
+      onMouseLeave={() => { x.set(0); y.set(0); }} 
+      style={{ rotateX, rotateY, transformStyle: "preserve-3d" }} 
+      className="relative w-full h-full perspective-1000 will-change-transform" // Thêm will-change-transform
+    >
+      <div style={{ transform: "translateZ(20px)" }} className="h-full">{children}</div>
+    </motion.div>
+  );
 }
 
 // 5. Project Card (Đã tối ưu dùng next/image)
