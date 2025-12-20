@@ -110,24 +110,28 @@
       "video": "",
       "visibility": "Private",
       "images": [
-        "/uploads/cv-1766048757290.jfif"
+        "/uploads/cv-1766214790289.jfif",
+        "/uploads/cv-1766214793323.jfif"
       ],
       "id": 1,
       "teamSize": "Solo (1 Member)"
     },
     {
-      "id": 2,
       "name": "2D RPG Game Engine",
       "role": "Game Developer",
-      "teamSize": "Team of 2",
       "stack": "Core Java, NetBeans",
       "overview": "Developed a Java-based game engine from scratch, applying advanced OOP principles.",
       "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly.",
       "github": "",
       "demo": "",
+      "video": "",
+      "visibility": "Public",
       "images": [
-        "/uploads/cv-1766048770175.jfif"
-      ]
+        "/uploads/cv-1766214803035.jfif",
+        "/uploads/cv-1766214807077.jfif"
+      ],
+      "id": 2,
+      "teamSize": "Team of 2"
     }
   ]
 }
