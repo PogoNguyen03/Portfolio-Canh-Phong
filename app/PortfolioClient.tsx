@@ -185,7 +185,7 @@ const SkillBadge = React.memo(({ item }: { item: string }) => {
   return (<motion.div whileHover={{ scale: 1.05, y: -2 }} className="px-3 py-1.5 bg-white/50 dark:bg-slate-800/50 backdrop-blur-md text-slate-700 dark:text-slate-200 text-xs md:text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 shadow-sm cursor-default flex items-center gap-2 hover:border-blue-400 dark:hover:border-blue-500 transition-colors"><span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse"></span>{item}</motion.div>);
 });
 
-function ExperienceItem({ exp, index }: { exp: any, index: number }) {
+const ExperienceItem = React.memo(({ exp, index }: { exp: any, index: number }) => {
   return (
     <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true, amount: 0.5 }} transition={{ delay: index * 0.1 }} className="relative pl-8 md:pl-0">
       <div className="md:grid md:grid-cols-12 md:gap-8 group">
@@ -202,7 +202,7 @@ function ExperienceItem({ exp, index }: { exp: any, index: number }) {
       </div>
     </motion.div>
   );
-}
+});
 
 function TiltCard({ children }: { children: React.ReactNode }) {
   const x = useMotionValue(0);
