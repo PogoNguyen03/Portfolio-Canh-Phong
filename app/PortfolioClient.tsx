@@ -587,7 +587,7 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
           <motion.button onClick={toggleTheme} whileTap={{ scale: 0.9 }} className="md:hidden fixed bottom-6 right-6 z-[60] p-4 bg-white/90 dark:bg-slate-800/90 backdrop-blur-md rounded-full text-slate-800 dark:text-yellow-400 shadow-xl border border-slate-200 dark:border-slate-700">{darkMode ? <Sun size={24} /> : <Moon size={24} />}</motion.button>
 
           {/* MAIN CONTENT */}
-          <main className="max-w-6xl mx-auto px-4 md:px-8 pb-24 pt-32 relative z-10">
+          <main className="max-w-6xl mx-auto px-4 md:px-8 pb-1 pt-32 relative z-10">
             {/* HERO SECTION */}
             <section id="about" className="min-h-[85vh] flex flex-col justify-center mb-20 scroll-mt-32">
               {/* ... Nội dung Hero Section giữ nguyên ... */}
