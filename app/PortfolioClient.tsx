@@ -12,10 +12,12 @@ import {
 } from 'lucide-react';
 import { motion, useScroll, useSpring, AnimatePresence, useMotionValue, useTransform, animate, MotionValue } from 'framer-motion';
 import { submitContactForm } from '@/lib/adminActions';
-import Spline from '@splinetool/react-spline';
+import dynamic from 'next/dynamic';
+import contactAnim from '../public/animations/CodingSlide.json';
 import { toast } from 'sonner';
 
-
+// Load Lottie động để tối ưu hiệu năng
+const Lottie = dynamic(() => import("lottie-react"), { ssr: false });
 // --- COMPONENTS CON (Đã tối ưu) ---
 
 // 1. Custom Cursor (Bản tối ưu hiệu năng - Không gây lag)
@@ -416,6 +418,19 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
             </div>
           </div>
         </div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.8 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="flex justify-center items-center h-[400px] lg:h-[500px]"
+        >
+          <Lottie 
+            animationData={contactAnim} 
+            loop={true} 
+            className="w-full h-full max-w-[500px]"
+          />
+        </motion.div>
 
         {/* <Spline scene="https://prod.spline.design/IZIKekGYwjUY1SNr/scene.splinecode" /> */}
         {/* <div className="bg-white/40 dark:bg-slate-900/40 backdrop-blur-sm rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl relative overflow-hidden h-[400px] lg:h-full min-h-[500px]">
