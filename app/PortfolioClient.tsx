@@ -31,25 +31,15 @@ function CustomCursor() {
 
   useEffect(() => {
     if (!window.matchMedia("(pointer: fine)").matches) return;
-    
+
     const moveCursor = (e: MouseEvent) => {
       window.requestAnimationFrame(() => {
         cursorX.set(e.clientX);
         cursorY.set(e.clientY);
       });
     };
-
-    const handleMouseOver = (e: MouseEvent) => {
-      const target = e.target as HTMLElement;
-      setIsHovering(!!target.closest('a, button, input, [role="button"]'));
-    };
-
     window.addEventListener('mousemove', moveCursor, { passive: true });
-    window.addEventListener('mouseover', handleMouseOver, { passive: true });
-    return () => {
-      window.removeEventListener('mousemove', moveCursor);
-      window.removeEventListener('mouseover', handleMouseOver);
-    };
+    return () => window.removeEventListener('mousemove', moveCursor);
   }, [cursorX, cursorY]);
 
   return (
@@ -69,6 +59,15 @@ function CustomCursor() {
     </div>
   );
 }
+//Dùng thay thể cho blur
+const BackgroundEffects = React.memo(() => (
+  <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div className="absolute inset-0 bg-grid-pattern opacity-[0.1]" />
+    <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-blue-500/10 rounded-full blur-[60px]" />
+    <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-500/10 rounded-full blur-[60px]" />
+  </div>
+));
+BackgroundEffects.displayName = 'BackgroundEffects';
 
 // 2. Terminal Intro (Giữ nguyên)
 function TerminalIntro({ onComplete }: { onComplete: () => void }) {
@@ -242,7 +241,7 @@ function ProjectCard({ project, index }: { project: any, index: number }) {
   const handleViewDetail = () => { sessionStorage.setItem("projectScrollPos", window.scrollY.toString()); };
 
   return (
-    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }} transition={{ duration: 0.6, delay: 0.1 }} className={`group relative flex flex-col-reverse gap-6 md:gap-8 md:items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
+    <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-100px" }} transition={{ duration: 0.6, delay: 0.1 }} className={`group relative flex flex-col-reverse gap-6 md:gap-8 md:items-center ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'}`}>
       {/* Content */}
       <div className="flex-1 relative z-10">
         <div className={`flex items-center gap-3 mb-3 md:mb-4 ${isEven ? 'justify-start' : 'md:justify-end justify-start'}`}><span className="text-blue-600 dark:text-blue-400 text-xs font-bold uppercase tracking-widest">Featured Project</span><span className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border ${isPrivate ? 'bg-slate-100 dark:bg-slate-800 text-slate-500 border-slate-200 dark:border-slate-700' : 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 border-green-200 dark:border-green-800'}`}>{isPrivate ? <Lock size={10} /> : <Globe size={10} />}{project.visibility || 'Public'}</span></div>
@@ -526,14 +525,14 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
       {!showIntro && (
         <div className="min-h-screen font-sans selection:bg-blue-500/30 selection:text-blue-900 dark:selection:text-blue-200 overflow-x-hidden relative transition-colors duration-500">
           <ScrollToTop />
+          
           <CustomCursor />
-          <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70]" style={{ scaleX }} />
+          <motion.div className="fixed top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-600 to-cyan-400 origin-left z-[70] hidden md:block" style={{ scaleX }} />
 
           {/* Background Effects */}
           <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-[0.4] dark:opacity-[0.2]" />
-            <motion.div animate={{ x: [0, 50, 0], y: [0, -50, 0] }} transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }} className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-blue-500/10 dark:bg-blue-600/20 rounded-full blur-[60px]" />
-            <motion.div animate={{ x: [0, -50, 0], y: [0, 50, 0] }} transition={{ repeat: Infinity, duration: 12, ease: "easeInOut", delay: 1 }} className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-500/10 dark:bg-purple-600/20 rounded-full blur-[60px]" />
+            <BackgroundEffects />
           </div>
 
           {/* ... PHẦN HEADER VÀ MOBILE NAV GIỮ NGUYÊN ... */}
