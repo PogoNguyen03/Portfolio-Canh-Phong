@@ -107,7 +107,3 @@ html {
 }
 
 /* Giảm tải tính toán khi vẽ render */
-section {
-  content-visibility: auto;
-  contain-intrinsic-size: 1px 500px; /* Ước tính chiều cao section để tránh nhảy trang khi cuộn */
-}
