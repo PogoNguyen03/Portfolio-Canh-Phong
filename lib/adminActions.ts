@@ -109,9 +109,9 @@ export async function submitContactForm(formData: FormData) {
       attachments: attachments,
     });
 
-    return { success: true, message: "Tin nhắn và tài liệu đã được gửi đến Gmail!" };
+    return { success: true, message: "The message and document have been sent to Gmail!" };
   } catch (error) {
-    console.error("Lỗi gửi mail:", error);
-    return { success: false, message: "Lỗi hệ thống: " + (error as Error).message };
+    console.error("Email sending error:", error);
+    return { success: false, message: "System error:" + (error as Error).message };
   }
 }

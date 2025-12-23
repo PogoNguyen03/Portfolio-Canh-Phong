@@ -440,19 +440,53 @@ function ContactSection({ personalInfo }: { personalInfo: any }) {
         >
           <form ref={formRef} onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <input name="name" type="text" placeholder="Tên của bạn" required className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white" />
-              <input name="email" type="email" placeholder="Email liên hệ" required className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white" />
+              <input
+                name="name"
+                type="text"
+                placeholder="Your Name"
+                required
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+              />
+              <input
+                name="email"
+                type="email"
+                placeholder="Email Address"
+                required
+                className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+              />
             </div>
-            <input name="subject" type="text" placeholder="Chủ đề (Tùy chọn)" className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white" />
-            <textarea name="message" placeholder="Nội dung tin nhắn..." required rows={4} className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white resize-none"></textarea>
+            <input
+              name="subject"
+              type="text"
+              placeholder="Subject (Optional)"
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white"
+            />
+            <textarea
+              name="message"
+              placeholder="Your Message..."
+              required
+              rows={4}
+              className="w-full px-4 py-3 rounded-xl bg-white dark:bg-slate-800 border dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500 transition-all dark:text-white resize-none"
+            ></textarea>
 
             <div className="space-y-2">
-              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400">Đính kèm tài liệu (CV, JD...)</label>
-              <input name="files" type="file" multiple className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400" />
+              <label className="block text-sm font-medium text-slate-500 dark:text-slate-400">
+                Attach documents (CV, JD...)
+              </label>
+              <input
+                name="files"
+                type="file"
+                multiple
+                className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 dark:file:bg-slate-800 dark:file:text-blue-400"
+              />
             </div>
 
-            <button type="submit" disabled={isPending} className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20">
-              {isPending ? "Đang gửi..." : "Gửi thông tin tới Gmail"}
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-500/20"
+            >
+              {isPending ? "Sending..." : "Send to Gmail"}
             </button>
           </form>
         </motion.div>
