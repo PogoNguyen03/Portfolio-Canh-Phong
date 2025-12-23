@@ -5,9 +5,20 @@ import fs from 'fs/promises';
 import path from 'path';
 import { revalidatePath } from 'next/cache';
 import { mkdir } from 'fs/promises';
+import nodemailer from 'nodemailer';
 
 const DATA_FILE_PATH = path.join(process.cwd(), 'data', 'portfolio.json');
-const CONTACT_FILE_PATH = path.join(process.cwd(), 'data', 'contact.json');
+
+// Cấu hình gửi mail - NÊN dùng biến môi trường (.env) để bảo mật
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    // THAY BẰNG EMAIL CỦA BẠN
+    user: process.env.EMAIL_USER || 'GMAIL_CUA_BAN@gmail.com', 
+    // THAY BẰNG MẬT KHẨU ỨNG DỤNG (APP PASSWORD)
+    pass: process.env.EMAIL_PASS || 'MA_APP_PASSWORD', 
+  },
+});
 
 // --- PHẦN PORTFOLIO (GIỮ NGUYÊN) ---
 export async function readData() {
@@ -66,84 +77,41 @@ export async function deleteListItem(sectionName: string, id: number) {
 
 // --- PHẦN LIÊN HỆ (MỚI THÊM) ---
 
-// 1. Đọc tin nhắn (Cho Admin)
-export async function getContactMessages() {
-  try {
-    const data = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
-    return JSON.parse(data);
-  } catch (error) {
-    return []; // Nếu chưa có file thì trả về rỗng
-  }
-}
-
-// 2. Gửi tin nhắn (Cho User)
 export async function submitContactForm(formData: FormData) {
   try {
-    const name = formData.get('name');
-    const email = formData.get('email');
-    const message = formData.get('message');
+    const name = formData.get('name') as string;
+    const email = formData.get('email') as string;
+    const subject = formData.get('subject') as string || 'New Contact from Portfolio';
+    const message = formData.get('message') as string;
     const files = formData.getAll('files') as File[];
-    const date = new Date().toISOString();
 
     if (!name || !email || !message) {
-      return { success: false, message: "Please fill in all information!" };
+      return { success: false, message: "Vui lòng điền đầy đủ thông tin!" };
     }
 
-    const attachments: string[] = [];
-    if (files && files.length > 0) {
-      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'contacts');
-      
-      // Tạo thư mục nếu chưa có
-      try {
-        await mkdir(uploadDir, { recursive: true });
-      } catch (e) {
-        // Bỏ qua nếu thư mục đã tồn tại
-      }
-
-      for (const file of files) {
-        // Chỉ lưu file có dung lượng > 0 và tên hợp lệ
-        if (file.size > 0 && file.name !== 'undefined') {
-          const bytes = await file.arrayBuffer();
-          const buffer = Buffer.from(bytes);
-          
-          // Tạo tên file duy nhất để tránh trùng
-          const fileName = `${Date.now()}-${file.name.replace(/\s/g, '-')}`;
-          const filePath = path.join(uploadDir, fileName);
-          
-          await fs.writeFile(filePath, buffer);
-          attachments.push(`/uploads/contacts/${fileName}`);
-        }
+    const attachments = [];
+    for (const file of files) {
+      if (file.size > 0 && file.name !== 'undefined') {
+        const bytes = await file.arrayBuffer();
+        attachments.push({
+          filename: file.name,
+          content: Buffer.from(bytes),
+        });
       }
     }
 
-    // Đọc dữ liệu cũ
-    let contacts = [];
-    try {
-      const fileData = await fs.readFile(CONTACT_FILE_PATH, 'utf-8');
-      contacts = JSON.parse(fileData);
-    } catch (e) {
-      contacts = [];
-    }
+    await transporter.sendMail({
+      from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
+      to: 'GMAIL_NHAN_CUA_BAN@gmail.com', // Email nhận thông báo của bạn
+      replyTo: email, // Khi bạn nhấn "Reply" trong Gmail, nó sẽ gửi tới email người liên hệ
+      subject: `[Portfolio] ${subject}`,
+      text: `Người gửi: ${name}\nEmail: ${email}\n\nNội dung:\n${message}`,
+      attachments: attachments,
+    });
 
-    // Thêm tin nhắn mới kèm danh sách file đính kèm
-    const newMessage = {
-      id: Date.now(),
-      name,
-      email,
-      message,
-      date,
-      attachments, // Lưu mảng đường dẫn file
-      read: false
-    };
-
-    contacts.unshift(newMessage);
-
-    await fs.writeFile(CONTACT_FILE_PATH, JSON.stringify(contacts, null, 2), 'utf-8');
-    revalidatePath('/admin/messages');
-    
-    return { success: true, message: "Messages and documents have been sent!" };
+    return { success: true, message: "Tin nhắn và tài liệu đã được gửi đến Gmail!" };
   } catch (error) {
-    console.error("Contact error:", error);
-    return { success: false, message: "System error: " + (error as Error).message };
+    console.error("Lỗi gửi mail:", error);
+    return { success: false, message: "Lỗi hệ thống: " + (error as Error).message };
   }
 }
