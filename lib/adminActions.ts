@@ -102,7 +102,7 @@ export async function submitContactForm(formData: FormData) {
 
     await transporter.sendMail({
       from: `"Portfolio Contact" <${process.env.EMAIL_USER}>`,
-      to: 'GMAIL_NHAN_CUA_BAN@gmail.com', // Email nhận thông báo của bạn
+      to: 'nguyencanhphong246@gmail.com', // Email nhận thông báo của bạn
       replyTo: email, // Khi bạn nhấn "Reply" trong Gmail, nó sẽ gửi tới email người liên hệ
       subject: `[Portfolio] ${subject}`,
       text: `Người gửi: ${name}\nEmail: ${email}\n\nNội dung:\n${message}`,
