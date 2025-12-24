@@ -24,6 +24,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const title = personalInfo?.title || "Full Stack Developer";
   const summary = personalInfo?.summary || "Welcome to my personal portfolio.";
   const avatar = personalInfo?.avatar || "/uploads/favicon.ico";
+  const ogImage = "/thumbnail.png";
 
   // 2. Trả về cấu hình SEO chuẩn
   return {
@@ -51,9 +52,9 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: `${name}'s Portfolio`,
       images: [
         {
-          url: "/thumbnail.png",
-          width: 800,
-          height: 600,
+          url: ogImage,
+          width: 1200,
+          height: 630,
           alt: `${name} Avatar`,
         },
       ],
