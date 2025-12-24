@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { readData } from "@/lib/adminActions"; // Import hàm đọc dữ liệu
-import { Toaster } from 'sonner';
+import { Toaster } from "sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -39,7 +39,7 @@ export async function generateMetadata(): Promise<Metadata> {
       name,
       "React",
       "Next.js",
-      "Business Analyst"
+      "Business Analyst",
     ],
     authors: [{ name: name }],
     creator: name,
@@ -47,29 +47,29 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: `${name} - ${title}`,
       description: summary,
-      url: 'https://portfolio-canh-phong.vercel.app',
+      url: "https://portfolio-canh-phong.vercel.app",
       siteName: `${name}'s Portfolio`,
       images: [
         {
-          url: avatar,
+          url: "/thumbnail.png",
           width: 800,
           height: 600,
           alt: `${name} Avatar`,
         },
       ],
-      locale: 'vi_VN',
-      type: 'website',
+      locale: "vi_VN",
+      type: "website",
     },
 
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
       title: `${name} - ${title}`,
       description: summary,
       images: [avatar],
     },
 
     icons: {
-      icon: '/favicon.ico',
+      icon: "/favicon.ico",
     },
   };
 }
@@ -90,4 +90,3 @@ export default function RootLayout({
     </html>
   );
 }
-
