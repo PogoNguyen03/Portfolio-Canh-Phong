@@ -105,33 +105,124 @@
       "stack": "Next.js, Prisma",
       "overview": "Digital Wedding Invitation Platform A Full-stack web application that personalizes wedding invitations with unique guest links and automated QR codes. The system features a real-time RSVP dashboard using WebSockets to instantly notify hosts of guest interactions, ensuring efficient event management.",
       "solution": "The platform replaces traditional paper invitations with a fully digital, personalized invitation system.\nEach guest receives a unique invitation link embedded with a QR code, allowing hosts to track attendance accurately and securely.\n\nThe system centralizes guest management, RSVP responses, and attendance status into a real-time dashboard powered by WebSockets. This enables instant updates when guests confirm, decline, or scan their invitation, eliminating manual follow-ups and reducing organizational effort.\n\nBy automating invitation distribution, RSVP tracking, and attendance verification, the platform streamlines wedding event management while enhancing guest experience through a modern, seamless digital flow.",
-      "github": "https://github.com/PogoNguyen03",
+      "github": "",
       "demo": "https://wedding-invite-peach.vercel.app/invite/nguyen-van-a",
       "video": "",
       "visibility": "Private",
       "images": [
-        "/uploads/cv-1766214790289.jfif",
-        "/uploads/cv-1766214793323.jfif"
+        "/uploads/cv-1766585372132.jpeg",
+        "/uploads/cv-1766585376129.jpeg",
+        "/uploads/cv-1766585380261.jpeg",
+        "/uploads/cv-1766585385777.jpeg"
       ],
       "id": 1,
       "teamSize": "Solo (1 Member)"
     },
     {
-      "name": "2D RPG Game Engine",
-      "role": "Game Developer",
+      "name": "2D RPG Game Engine (Game Counterstrike Journey)",
+      "role": "Designer, Fullstack Developer",
       "stack": "Core Java, NetBeans",
-      "overview": "Developed a Java-based game engine from scratch, applying advanced OOP principles.",
-      "solution": "Optimized collision detection algorithms to handle multi-object interactions smoothly.",
+      "overview": "\"Counterstrike Journey\" is a classic 2D Action-RPG developed entirely from scratch using Core Java and the NetBeans IDE, without relying on any third-party game engines. This project was conceived to demonstrate a deep understanding of software architecture and object-oriented programming principles.\n\nAs the sole Full-Stack Developer and UI Designer, I built the entire system including the game loop logic, graphical rendering, and user interface. The game features an immersive world with distinct biomes (Dungeon, Snow), a dynamic day/night cycle, a complex inventory system, and challenging boss fights with custom AI patterns. It serves as a comprehensive showcase of my ability to handle complex logic and resource management in a standalone application.",
+      "solution": "To achieve a performant and scalable RPG system using only Java SE, I implemented the following technical approaches:\n\nCustom Game Engine Architecture:\n\nImplemented a high-precision Game Loop ensuring a stable 60 FPS update/render cycle using Java Threads and DeltaTime calculation to decouple game logic from frame rate.\n\nUtilized Object-Oriented Programming (OOP) extensively, applying Polymorphism and Inheritance to create a scalable Entity system (handling Player, NPCs, Enemies, and Projectiles within a unified hierarchy).\n\nAdvanced Rendering & Lighting:\n\nDeveloped a custom rendering pipeline using Java AWT and Graphics2D to manage pixel-perfect sprite drawing.\n\nDesigned a dynamic Lighting System for the Day/Night cycle using Alpha Composite layers to create a \"Fog of War\" effect and realistic light sources around the player.\n\nGame Logic & Data Structures:\n\nCollision Detection: Built a custom rectangle-intersection algorithm to handle interactions between the player, tilemaps, and enemies.\n\nState Management: Implemented a GameStateManager to handle seamless transitions between Menu, Gameplay, Inventory, and Pause states.\n\nPersistence: Developed a file I/O system to serialize player data (stats, inventory, position), enabling robust Save/Load functionality.",
+      "github": "https://github.com/PogoNguyen03/Counterstrike-Journey",
+      "demo": "",
+      "video": "",
+      "visibility": "Public",
+      "images": [
+        "/uploads/cv-1766584527338.png",
+        "/uploads/cv-1766584533650.png",
+        "/uploads/cv-1766584536973.png",
+        "/uploads/cv-1766584540453.png",
+        "/uploads/cv-1766584557066.png",
+        "/uploads/cv-1766584560659.png",
+        "/uploads/cv-1766584564077.png",
+        "/uploads/cv-1766584567675.png"
+      ],
+      "id": 2,
+      "teamSize": "Team of 3"
+    },
+    {
+      "name": "SME & Corporate Website Ecosystem",
+      "role": "Web Developer",
+      "stack": "WordPress, PHP",
+      "overview": "During my tenure at IT GROUP INVESTMENT JSC, I collaborated with a 4-member team to deliver comprehensive web solutions for various Small and Medium Enterprises (SMEs). This collection of projects encompasses diverse industries, ranging from E-commerce & F&B (e.g., \"Co Hoan Food\", \"Vinh An Decal\") to Legal Services (e.g., \"Di An Notary\") and Industrial Manufacturing (e.g., \"Tuong Lai Rubber\").\n\nThe primary objective was to facilitate digital transformation for clients by building professional, high-performance websites that enhance brand presence and optimize customer engagement. As a key team member, I was responsible for Front-end development, theme customization, and ensuring the final product aligned perfectly with the client's business identity.",
+      "solution": "To manage multiple projects with distinct requirements while maintaining high quality, our team implemented the following technical and design strategies:\n\nCustom UI/UX Design & Branding:\n\nMoved beyond standard templates by extensively customizing HTML/CSS and PHP files.\n\nTailored the visual identity (color schemes, typography, layout) to match specific industry standards—using clean, professional layouts for legal/corporate sites and vibrant, conversion-focused designs for retail/F&B sites.\n\nResponsive & Mobile-First Approach:\n\nEnsured full compatibility across all devices (Desktop, Tablet, Mobile).\n\nSpecifically optimized the Mobile UX for e-commerce projects (like \"Co Hoan Food\") to streamline the shopping experience and maximize conversion rates for mobile users.\n\nPerformance & SEO Optimization:\n\nOptimized source code and configured caching mechanisms to ensure fast page load speeds.\n\nIntegrated and configured SEO tools (Yoast SEO) to improve search engine visibility, helping clients rank higher on Google for their respective keywords.\n\nUser-Friendly CMS Customization:\n\nBuilt intuitive Admin Dashboards tailored to the client's operational needs.\n\nThis allowed non-technical business owners to easily manage content, update products, and track orders independently after the project handover.",
       "github": "",
       "demo": "",
       "video": "",
       "visibility": "Public",
       "images": [
-        "/uploads/cv-1766214803035.jfif",
-        "/uploads/cv-1766214807077.jfif"
+        "/uploads/cv-1766586220725.png",
+        "/uploads/cv-1766586223860.png",
+        "/uploads/cv-1766586227322.png",
+        "/uploads/cv-1766586231573.png",
+        "/uploads/cv-1766586234848.png",
+        "/uploads/cv-1766586238157.png",
+        "/uploads/cv-1766586241399.png",
+        "/uploads/cv-1766586245466.png",
+        "/uploads/cv-1766586248982.png",
+        "/uploads/cv-1766586252787.png",
+        "/uploads/cv-1766586257355.png",
+        "/uploads/cv-1766586260175.png",
+        "/uploads/cv-1766586264860.png"
       ],
-      "id": 2,
-      "teamSize": "Team of 2"
+      "id": 3,
+      "teamSize": "Team of 4"
+    },
+    {
+      "name": "Citric Store - Digital Application Distribution Platform",
+      "role": "Frontend Devloper",
+      "stack": "C#, .NET",
+      "overview": "\"Citric Store\" marks my first milestone as a software developer—a capstone team project focused on building a web-based marketplace for digital applications and games. The platform functions similarly to an app store, allowing users to browse a catalog of games and software, view detailed specifications, add items to a shopping cart, and proceed to checkout. The goal was to understand the fundamental flow of an E-commerce system, from product display to order processing, while creating a visually engaging user experience tailored for gamers.",
+      "solution": "As a foundational project, our team focused on core web functionalities and user interface design:\n\nThematic UI/UX Design:\n\nDesigned a distinctive Dark & Yellow color scheme to create a modern, energetic \"Gaming\" atmosphere.\n\nBuilt a responsive layout that showcases game banners and high-quality thumbnails effectively.\n\nCore E-commerce Features:\n\nProduct Management: Developed pages for \"Product Listings\" and detailed \"Product Descriptions\" (including specs, ratings, and pricing).\n\nSearch Engine: Implemented a search bar allowing users to quickly find apps by name or keywords (e.g., \"King\", \"Goat\").\n\nShopping Cart Logic: Built a session-based shopping cart system where users can add items, update quantities, or remove products before payment.\n\nCheckout & Validation:\n\nCreated a checkout workflow that collects customer information (Name, Email, Phone, Banking details).\n\nImplemented form validation to ensure data integrity during the ordering process.",
+      "github": "https://github.com/PogoNguyen03/Trinh-duyet-tai-ung-dung-citric",
+      "demo": "",
+      "video": "",
+      "visibility": "Public",
+      "images": [
+        "/uploads/cv-1766587203459.png",
+        "/uploads/cv-1766587207049.png",
+        "/uploads/cv-1766587210227.png",
+        "/uploads/cv-1766587215099.png",
+        "/uploads/cv-1766587219261.png"
+      ],
+      "id": 4,
+      "teamSize": "Team of 3"
+    },
+    {
+      "name": "DaoComics - Mobile Manga & Comic Reader App",
+      "role": "Leader, Front-end Developer",
+      "stack": "Android Native (Java/Kotlin), Firebase",
+      "overview": "DaoComics is a native Android application designed to provide a seamless digital reading experience for manga and comic enthusiasts. In a market flooded with complex reading apps, our team aimed to build a user-centric platform that focuses on speed, simplicity, and personalization. The app allows users to browse a vast library of genres (Action, Romance, Horror), manage their favorite titles, and enjoy high-quality content with an intuitive navigation system. As the Team Leader, I guided the project from conceptualization to the final MVP (Minimum Viable Product), ensuring the integration between the Android client and Firebase backend was robust and efficient.",
+      "solution": "To deliver a high-performance mobile app, I implemented the following technical strategies:\n\nModern UI/UX Implementation:\n\nDesigned a clean, minimalist interface using XML and Material Design principles with a cohesive color theme (Purple/White).\n\nImplemented complex RecyclerView adapters to handle dynamic lists of comics and chapters efficiently, ensuring smooth scrolling performance even with large datasets.\n\nDeveloped a \"Webtoon-style\" vertical reading view, optimizing image loading for mobile screens.\n\nFirebase Integration (Serverless Architecture):\n\nAuthentication: Integrated Firebase Auth to handle secure Sign-up/Login processes (including \"Forgot Password\" flows) and session management.\n\nRealtime Database: Structured the NoSQL database to store user profiles, comic metadata, and reading history in real-time, allowing for instant updates across devices.\n\nProject Management (Leadership):\n\nAdopted Agile methodologies to break down features into sprints.\n\nConducted code reviews and merged Front-end components with Back-end logic to minimize conflicts and bugs.",
+      "github": "https://github.com/PogoNguyen03/APP_DOC_TRUYEN",
+      "demo": "",
+      "video": "https://www.youtube.com/embed/iGmUbsIPiVA?si=3B2jgAR02kXFwJ6l",
+      "visibility": "Public",
+      "images": [
+        "/uploads/cv-1766588736684.jpg",
+        "/uploads/cv-1766588765690.jpg",
+        "/uploads/cv-1766588775323.jpg",
+        "/uploads/cv-1766588778722.jpg",
+        "/uploads/cv-1766588783517.jpg",
+        "/uploads/cv-1766588787245.jpg",
+        "/uploads/cv-1766588791737.jpg"
+      ],
+      "id": 5,
+      "teamSize": "Team of 3"
+    },
+    {
+      "name": "One Store - Digital Bookstore Application",
+      "role": "Leader, Full Stack Mobile Developer",
+      "stack": "Flutter, SQLite",
+      "overview": "One Store is a cross-platform mobile application developed with Flutter, designed to function as a comprehensive digital bookstore. The app provides a seamless interface for users to browse various book categories, search for specific titles, view detailed product information, and manage a \"Favorites\" list.\n\nAs the Team Leader, I defined the project architecture and guided the team through the development lifecycle. Simultaneously, as a Full Stack Developer, I handled the end-to-end implementation—creating the visual interface and building the underlying database logic to ensure the app functions smoothly offline and online.",
+      "solution": "To build a robust and user-friendly application, I implemented the following technical solutions:\n\nClean Architecture & Modular Design:\n\nStructured the project into distinct layers: data (models, providers, database) and page (UI screens like Home, Login, Product Details) to ensure code maintainability and scalability.\n\nDesigned a reusable widget system (e.g., homescreenwidget.dart, panner.dart) to optimize development time and consistency.\n\nLocal Backend Implementation (SQLite):\n\nDeveloped a DatabaseHelper class using SQLite to manage the User Authentication system (Login/Signup) directly on the device.\n\nWrote raw SQL queries to handle CRUD operations, ensuring secure and fast data retrieval for user profiles.\n\nAdvanced UI/UX Implementation:\n\nIntegrated flutter_staggered_grid_view to create a dynamic, Pinterest-like layout for displaying book covers, handling different image aspect ratios gracefully.\n\nImplemented carousel_slider for the \"FeaturedBanner\" section to highlight top-selling books and promotions.\n\nBuilt a custom Navigation system using circle_nav_bar for a modern, animated user experience.\n\nSecurity & Storage:\n\nUtilized flutter_secure_storage and shared_preferences to manage session data and sensitive user information securely.",
+      "github": "https://github.com/PogoNguyen03/One-Store",
+      "demo": "",
+      "video": "https://www.youtube.com/embed/LBjAKA9bdz8?si=oYCPNORERHIAf0dK",
+      "visibility": "Public",
+      "images": [],
+      "id": 6
     }
   ]
 }
