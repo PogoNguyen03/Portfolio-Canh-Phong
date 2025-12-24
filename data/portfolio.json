@@ -100,13 +100,13 @@
   ],
   "projects": [
     {
-      "name": "Digital Wedding Invitation Platform",
+      "name": "Online wedding invitations",
       "role": "Full Stack Developer & System Architect",
-      "stack": "Next.js, Prisma, SQL",
-      "overview": "Architected a scalable platform allowing users to generate personalized QR codes for event check-ins.",
-      "solution": "Engineered a secure Middleware layer to filter malicious traffic and enforce IP-based authentication.",
-      "github": "https://github.com",
-      "demo": "https://wedding-demo.vercel.app",
+      "stack": "Next.js, Prisma",
+      "overview": "Digital Wedding Invitation Platform A Full-stack web application that personalizes wedding invitations with unique guest links and automated QR codes. The system features a real-time RSVP dashboard using WebSockets to instantly notify hosts of guest interactions, ensuring efficient event management.",
+      "solution": "The platform replaces traditional paper invitations with a fully digital, personalized invitation system.\nEach guest receives a unique invitation link embedded with a QR code, allowing hosts to track attendance accurately and securely.\n\nThe system centralizes guest management, RSVP responses, and attendance status into a real-time dashboard powered by WebSockets. This enables instant updates when guests confirm, decline, or scan their invitation, eliminating manual follow-ups and reducing organizational effort.\n\nBy automating invitation distribution, RSVP tracking, and attendance verification, the platform streamlines wedding event management while enhancing guest experience through a modern, seamless digital flow.",
+      "github": "https://github.com/PogoNguyen03",
+      "demo": "https://wedding-invite-peach.vercel.app/invite/nguyen-van-a",
       "video": "",
       "visibility": "Private",
       "images": [
