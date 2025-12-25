@@ -819,15 +819,15 @@ export default function PortfolioClient({ initialData }: { initialData: any }) {
 
   useEffect(() => {
     if (
-      localStorage.theme === "light" ||
+      localStorage.theme === "dark" ||
       (!("theme" in localStorage) &&
-        window.matchMedia("(prefers-color-scheme: light)").matches)
+        window.matchMedia("(prefers-color-scheme: dark)").matches)
     ) {
       setDarkMode(true);
-      document.documentElement.classList.add("light");
+      document.documentElement.classList.add("dark");
     } else {
       setDarkMode(false);
-      document.documentElement.classList.remove("light");
+      document.documentElement.classList.remove("dark");
     }
   }, []);
 
